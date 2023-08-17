@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+isort = "*"
+django = "*"
+djangorestframework = "*"
+django-environ = "*"
+django-filter = "*"
+django-extensions = "*"
+pillow = "*"
+psycopg2 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
