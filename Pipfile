@@ -12,6 +12,9 @@ django-filter = "*"
 django-extensions = "*"
 pillow = "*"
 psycopg2 = "*"
+install = "*"
+djangorestframework-simplejwt = "*"
+flake8 = "*"
 
 [dev-packages]
 
