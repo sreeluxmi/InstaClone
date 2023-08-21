@@ -15,7 +15,7 @@ User = get_user_model()
 class UserRegistrationViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
 
 
 class UserLoginViewSet(viewsets.ViewSet):
