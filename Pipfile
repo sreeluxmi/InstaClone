@@ -4,19 +4,25 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-isort = "*"
-django = "*"
-djangorestframework = "*"
-django-environ = "*"
+django = "==4.0.3"
 django-filter = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
+django-environ = "*"
 django-extensions = "*"
-pillow = "*"
+gunicorn = "*"
+ipython = "*"
 psycopg2 = "*"
-install = "*"
-djangorestframework-simplejwt = "*"
-flake8 = "*"
 
 [dev-packages]
+yapf = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+superuser = "python ./src/manage.py createsuperuser"
+make = "python ./src/manage.py makemigrations"
+migrate = "python ./src/manage.py migrate"
+server = "python ./src/manage.py runserver"
