@@ -13,10 +13,12 @@ django-extensions = "*"
 gunicorn = "*"
 ipython = "*"
 psycopg2 = "*"
+drf-spectacular = {extras = ["sidecar"], version = "*"}
 
 [dev-packages]
 yapf = "*"
 flake8 = "*"
+isort = "*"
 
 [requires]
 python_version = "3.9"
