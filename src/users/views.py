@@ -3,20 +3,25 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 # from rest_framework.renderers import TemplateHTMLRenderer
 
 from django.contrib.auth import get_user_model
 
-from .models import Profile, Post, Follow
+from .models import (Profile, FollowList)
 from .serializers import (UserSerializer, UserLoginSerializer,
-                          ProfileSerializer, FollowSerializer,
-                          PostSerializer,)
+                          ProfileSerializer,
+                          FollowListSerializer,)
 User = get_user_model()
 
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        Profile.objects.create(user=user)
 
 
 class UserLoginView(APIView):
@@ -55,29 +60,31 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+class FollowListViewSet(viewsets.ModelViewSet):
+    queryset = FollowList.objects.all()
+    serializer_class = FollowListSerializer
+
+    
 
 
-class FollowUser(APIView):
-    def post(self, request, user_id, *args, **kwargs):
-        follower = request.user
-        followed = User.objects.get(pk=user_id)
+# class FollowUser(APIView):
+#     def post(self, request, user_id, *args, **kwargs):
+#         follower = request.user
+#         followed = User.objects.get(pk=user_id)
 
-        follow, created = Follow.objects.get_or_create(follower=follower, followed=followed)
+#         follow, created = FollowList.objects.get_or_create(follower=follower, followed=followed)
 
-        if created:
-            return Response({'detail': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'detail': 'User already followed.'}, status=status.HTTP_400_BAD_REQUEST)
+#         if created:
+#             return Response({'detail': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({'detail': 'User already followed.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UnfollowUser(APIView):
-    def post(self, request, user_id, *args, **kwargs):
-        follower = request.user
-        followed = User.objects.get(pk=user_id)
+# class UnfollowUser(APIView):
+#     def post(self, request, user_id, *args, **kwargs):
+#         follower = request.user
+#         followed = User.objects.get(pk=user_id)
 
-        Follow.objects.filter(follower=follower, followed=followed).delete()
+#         FollowList.objects.filter(follower=follower, followed=followed).delete()
 
-        return Response({'detail': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)
+#         return Response({'detail': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)

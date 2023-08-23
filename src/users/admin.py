@@ -4,7 +4,7 @@ from django.contrib import admin
 # local
 from .models import (User,
                      Profile,
-                     Post)
+                     FollowList)
 
 
 @admin.register(User)
@@ -13,4 +13,4 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(Profile)
-admin.site.register(Post)
+admin.site.register(FollowList)
