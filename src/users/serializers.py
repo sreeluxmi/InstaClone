@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import (Profile,
-                     FollowList)
+from .models import (Profile,Followlist)
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -27,11 +26,10 @@ class UserLoginSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["user", "bio", "profile_pic", "public"]
+        fields = "__all__"
 
 
-class FollowListSerializer(serializers.ModelSerializer):
+class FollowListSerializer(serializers.Serializer):
     class Meta:
-        model = FollowList
-        fields = '__all__'
-
+        model = Followlist
+        fields = ['follower', 'following', 'status']

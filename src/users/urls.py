@@ -1,17 +1,18 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (UserRegistrationView, UserLoginView,
-                    ProfileViewSet,
-                    FollowListViewSet)
+                    ProfileViewSet, FollowRequestView,
+                    AcceptFollowRequest)
 
 
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
-router.register(r'follows', FollowListViewSet)
 
 
 urlpatterns = [
     path('api/', include(router.urls)),
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('login/', UserLoginView.as_view(), name='user-login'),
+    path('follow_request/', FollowRequestView.as_view()),
+    path('accept_request/', AcceptFollowRequest.as_view())
 ]

@@ -1,17 +1,18 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 # from rest_framework.renderers import TemplateHTMLRenderer
 
 from django.contrib.auth import get_user_model
 
-from .models import (Profile, FollowList)
+from .models import (Profile,Followlist)
 from .serializers import (UserSerializer, UserLoginSerializer,
-                          ProfileSerializer,
-                          FollowListSerializer,)
+                          ProfileSerializer,FollowListSerializer)
 User = get_user_model()
 
 
@@ -60,31 +61,52 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
 
-class FollowListViewSet(viewsets.ModelViewSet):
-    queryset = FollowList.objects.all()
-    serializer_class = FollowListSerializer
+class FollowRequestView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    
+    def post(self, request):
+        follower = request.user
+        print("follower", follower)
+        following_id = request.data.get('following_id')
+        print("following_id", following_id)
+
+        following = get_object_or_404(User, id=following_id)
+        print("following", following)
+        if follower != following:
+            Followlist.objects.create(follower=follower,
+                                      following=following)
+            print("Request send")
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# class FollowUser(APIView):
-#     def post(self, request, user_id, *args, **kwargs):
-#         follower = request.user
-#         followed = User.objects.get(pk=user_id)
+class AcceptFollowRequest(APIView):
+    permission_classes = [IsAuthenticated]
 
-#         follow, created = FollowList.objects.get_or_create(follower=follower, followed=followed)
+    def post(self, request):
+        following = request.user
+        print("following 2", following)
 
-#         if created:
-#             return Response({'detail': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response({'detail': 'User already followed.'}, status=status.HTTP_400_BAD_REQUEST)
+        follower_id = request.data.get('follower_id')
+        print("follower_id 2", follower_id)  # it is the id of requested person
 
+        try:
+            follower = User.objects.get(id=follower_id)
+        except User.DoesNotExist:
+            return Response({'detail': 'Follower not found'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        # Ensure that the authenticated user (following) is the same as the user whose profile is being viewed (follower)
 
-# class UnfollowUser(APIView):
-#     def post(self, request, user_id, *args, **kwargs):
-#         follower = request.user
-#         followed = User.objects.get(pk=user_id)
+        follower = get_object_or_404(User, id=follower_id)
+        print("follower 2", follower)
 
-#         FollowList.objects.filter(follower=follower, followed=followed).delete()
+        followlist = Followlist.objects.get(follower=follower,
+                                            following=following,
+                                            status='pending')
+        followlist.status = 'accepted'
+        followlist.save()
 
-#         return Response({'detail': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)
+        following.followers.add(follower)
+        follower.following.add(following)
+
+        return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)

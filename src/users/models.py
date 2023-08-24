@@ -12,15 +12,21 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    # public = models.BooleanField(default=True)  # True for public, False for private
+    public = models.BooleanField(default=True)  # True for public, False for private
 
     def __str__(self):
         return self.user.username
 
 
-class FollowList(models.Model):
-    follower = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+class Followlist(models.Model):
+    STATUS_CHOICE = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accpeted'),
+        ('rejected', 'Rejected')
+    )
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending')
 
     class Meta:
         unique_together = ('follower', 'following')
