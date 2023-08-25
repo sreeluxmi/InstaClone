@@ -10,9 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import get_user_model
 
-from .models import (Profile,Followlist)
+from .models import (Profile, Followlist)
 from .serializers import (UserSerializer, UserLoginSerializer,
-                          ProfileSerializer,FollowListSerializer)
+                          ProfileSerializer, FollowListSerializer)
 User = get_user_model()
 
 
@@ -60,23 +60,67 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()    
+        serializer = self.get_serializer(instance)
+        profile_data = serializer.data
+        print('profile_data', profile_data)
+
+        profile_data['followers'] = self.get_followers_list(instance)
+        profile_data['following'] = self.get_following_list(instance)
+
+        return Response(profile_data)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            print("if", serializer)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        print("if not", serializer.data)
+
+        profiles_with_followers = []
+        for profile_data in serializer.data:
+            profile = Profile.objects.get(user_id=profile_data['user'])
+            profile_data['followers'] = self.get_followers_list(profile)
+            profile_data['following'] = self.get_following_list(profile)
+            profiles_with_followers.append(profile_data)
+
+        return Response(profiles_with_followers)
+
+    def get_followers_list(self, profile):
+        followers = Followlist.objects.filter(following=profile.user, status='accepted')
+        follower_user_ids = followers.values_list('follower_id', flat=True)
+        follower_users = User.objects.filter(id__in=follower_user_ids)
+        return UserSerializer(follower_users, many=True).data
+
+    def get_following_list(self, profile):
+        following = Followlist.objects.filter(follower=profile.user, status='accepted')
+        following_user_ids = following.values_list('following_id', flat=True)
+        following_users = User.objects.filter(id__in=following_user_ids)
+        return UserSerializer(following_users, many=True).data
+
 
 class FollowRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         follower = request.user
-        print("follower", follower)
         following_id = request.data.get('following_id')
-        print("following_id", following_id)
 
         following = get_object_or_404(User, id=following_id)
-        print("following", following)
         if follower != following:
-            Followlist.objects.create(follower=follower,
-                                      following=following)
-            print("Request send")
-            return Response(status=status.HTTP_201_CREATED)
+            if following.profile.public:
+                Followlist.objects.create(follower=follower, following=following)
+                return Response(status=status.HTTP_201_CREATED)
+            else:
+                Followlist.objects.create(follower=follower, following=following,
+                                          status='pending')
+                return Response({'detail': 'Following request sent and pending approval'}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -85,28 +129,27 @@ class AcceptFollowRequest(APIView):
 
     def post(self, request):
         following = request.user
-        print("following 2", following)
-
         follower_id = request.data.get('follower_id')
-        print("follower_id 2", follower_id)  # it is the id of requested person
 
         try:
             follower = User.objects.get(id=follower_id)
         except User.DoesNotExist:
-            return Response({'detail': 'Follower not found'},
+            return Response({'detail': 'User not found'},
                             status=status.HTTP_400_BAD_REQUEST)
-        # Ensure that the authenticated user (following) is the same as the user whose profile is being viewed (follower)
 
-        follower = get_object_or_404(User, id=follower_id)
-        print("follower 2", follower)
+        try:
+            followlist = Followlist.objects.get(follower=follower,
+                                                following=following,
+                                                status='pending')
+        except Followlist.DoesNotExist:
+            return Response({'detail': 'Friend request not found'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        followlist = Followlist.objects.get(follower=follower,
-                                            following=following,
-                                            status='pending')
         followlist.status = 'accepted'
         followlist.save()
 
-        following.followers.add(follower)
-        follower.following.add(following)
+        followlist.following.followers.add(followlist.follower)
+        followlist.follower.following.add(followlist.following)
 
         return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)
+

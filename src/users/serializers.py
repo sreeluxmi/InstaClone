@@ -24,9 +24,26 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    followers = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
+
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields = ["user", "bio", "profile_pic", "public", "followers", "following"]
+
+    def get_followers(self, obj):
+        user = obj.user
+        followers = Followlist.objects.filter(following=user, status='accepted')
+        follower_user_ids = followers.values_list('follower_id', flat=True)
+        follower_users = User.objects.filter(id__in=follower_user_ids)
+        return UserSerializer(follower_users, many=True).data
+
+    def get_following(self, obj):
+        user = obj.user
+        following = Followlist.objects.filter(follower=user, status='accepted')
+        following_user_ids = following.values_list('following_id', flat=True)
+        following_users = User.objects.filter(id__in=following_user_ids)
+        return UserSerializer(following_users, many=True).data
 
 
 class FollowListSerializer(serializers.Serializer):
