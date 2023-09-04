@@ -4,15 +4,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 # from rest_framework.renderers import TemplateHTMLRenderer
-
 from django.contrib.auth import get_user_model
 
 from .models import (Profile, Followlist)
-from .serializers import (UserSerializer, UserLoginSerializer,
-                          ProfileSerializer, FollowListSerializer)
+from .serializers import (UserSerializer,
+                          UserLoginSerializer,
+                          ProfileSerializer,
+                          FollowListSerializer)
 User = get_user_model()
 
 
@@ -61,45 +61,37 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()    
+        instance = self.get_object()
         serializer = self.get_serializer(instance)
         profile_data = serializer.data
-        print('profile_data', profile_data)
-
         profile_data['followers'] = self.get_followers_list(instance)
         profile_data['following'] = self.get_following_list(instance)
-
         return Response(profile_data)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            print("if", serializer)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        print("if not", serializer.data)
-
         profiles_with_followers = []
         for profile_data in serializer.data:
             profile = Profile.objects.get(user_id=profile_data['user'])
             profile_data['followers'] = self.get_followers_list(profile)
             profile_data['following'] = self.get_following_list(profile)
             profiles_with_followers.append(profile_data)
-
         return Response(profiles_with_followers)
 
     def get_followers_list(self, profile):
-        followers = Followlist.objects.filter(following=profile.user, status='accepted')
+        followers = Followlist.objects.filter(following=profile.user, reqstatus='accepted')
         follower_user_ids = followers.values_list('follower_id', flat=True)
         follower_users = User.objects.filter(id__in=follower_user_ids)
         return UserSerializer(follower_users, many=True).data
 
     def get_following_list(self, profile):
-        following = Followlist.objects.filter(follower=profile.user, status='accepted')
+        following = Followlist.objects.filter(follower=profile.user, reqstatus='accepted')
         following_user_ids = following.values_list('following_id', flat=True)
         following_users = User.objects.filter(id__in=following_user_ids)
         return UserSerializer(following_users, many=True).data
@@ -111,17 +103,26 @@ class FollowRequestView(APIView):
     def post(self, request):
         follower = request.user
         following_id = request.data.get('following_id')
-
         following = get_object_or_404(User, id=following_id)
-        if follower != following:
-            if following.profile.public:
-                Followlist.objects.create(follower=follower, following=following)
-                return Response(status=status.HTTP_201_CREATED)
-            else:
-                Followlist.objects.create(follower=follower, following=following,
-                                          status='pending')
-                return Response({'detail': 'Following request sent and pending approval'}, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if follower == following:
+            return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            followlist = Followlist.objects.get(follower=follower, following=following)
+            if followlist.reqstatus == 'accepted':
+                return Response({'detail': 'You are already following this user.'}, status=status.HTTP_400_BAD_REQUEST)
+            elif followlist.reqstatus == 'pending':
+                return Response({'detail': 'You have a pending follow request to this user.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Followlist.DoesNotExist:
+            pass
+
+        if following.profile.public:
+            Followlist.objects.create(follower=follower, following=following, reqstatus='accepted')
+            return Response({'detail': 'You are now following this user.'}, status=status.HTTP_201_CREATED)
+        else:
+            Followlist.objects.create(follower=follower, following=following, reqstatus='pending')
+            return Response({'detail': 'Following request sent and pending approval'}, status=status.HTTP_201_CREATED)
 
 
 class AcceptFollowRequest(APIView):
@@ -129,27 +130,27 @@ class AcceptFollowRequest(APIView):
 
     def post(self, request):
         following = request.user
+        print("following", following)
         follower_id = request.data.get('follower_id')
-
+        print("follower id", follower_id)
         try:
             follower = User.objects.get(id=follower_id)
+            print("try follower", follower)
         except User.DoesNotExist:
-            return Response({'detail': 'User not found'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
+            print("except")
+            return Response({'detail': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            followlist = Followlist.objects.get(follower=follower,
-                                                following=following,
-                                                status='pending')
+            followlist = Followlist.objects.get(follower=follower, following=following, reqstatus='pending')
+            print(followlist)
         except Followlist.DoesNotExist:
-            return Response({'detail': 'Friend request not found'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        followlist.status = 'accepted'
-        followlist.save()
-
-        followlist.following.followers.add(followlist.follower)
-        followlist.follower.following.add(followlist.following)
-
-        return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)
-
+            return Response({'detail': 'Friend request not found'}, status=status.HTTP_400_BAD_REQUEST)
+        action = request.data.get('action')
+        if action == 'accept':
+            followlist.reqstatus = 'accepted'
+            followlist.save()
+            return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)
+        elif action == 'cancel':
+            followlist.delete()
+            return Response({'detail': 'Friend request canceled'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)

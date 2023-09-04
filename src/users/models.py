@@ -26,7 +26,7 @@ class Followlist(models.Model):
     )
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending')
+    reqstatus = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending')
 
     class Meta:
         unique_together = ('follower', 'following')

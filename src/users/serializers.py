@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Profile,Followlist)
+from .models import (Profile, Followlist)
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -33,14 +33,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_followers(self, obj):
         user = obj.user
-        followers = Followlist.objects.filter(following=user, status='accepted')
+        followers = Followlist.objects.filter(following=user, reqstatus='accepted')
         follower_user_ids = followers.values_list('follower_id', flat=True)
         follower_users = User.objects.filter(id__in=follower_user_ids)
         return UserSerializer(follower_users, many=True).data
 
     def get_following(self, obj):
         user = obj.user
-        following = Followlist.objects.filter(follower=user, status='accepted')
+        following = Followlist.objects.filter(follower=user, reqstatus='accepted')
         following_user_ids = following.values_list('following_id', flat=True)
         following_users = User.objects.filter(id__in=following_user_ids)
         return UserSerializer(following_users, many=True).data
@@ -49,4 +49,4 @@ class ProfileSerializer(serializers.ModelSerializer):
 class FollowListSerializer(serializers.Serializer):
     class Meta:
         model = Followlist
-        fields = ['follower', 'following', 'status']
+        fields = ['follower', 'following', 'reqstatus']
