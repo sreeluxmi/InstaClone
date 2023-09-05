@@ -130,18 +130,13 @@ class AcceptFollowRequest(APIView):
 
     def post(self, request):
         following = request.user
-        print("following", following)
         follower_id = request.data.get('follower_id')
-        print("follower id", follower_id)
         try:
             follower = User.objects.get(id=follower_id)
-            print("try follower", follower)
         except User.DoesNotExist:
-            print("except")
             return Response({'detail': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             followlist = Followlist.objects.get(follower=follower, following=following, reqstatus='pending')
-            print(followlist)
         except Followlist.DoesNotExist:
             return Response({'detail': 'Friend request not found'}, status=status.HTTP_400_BAD_REQUEST)
         action = request.data.get('action')
