@@ -1,3 +1,4 @@
+# DJANGO
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -5,14 +6,16 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.renderers import TemplateHTMLRenderer
 from django.contrib.auth import get_user_model
 
+# LOCAL
 from .models import (Profile, Followlist)
 from .serializers import (UserSerializer,
                           UserLoginSerializer,
                           ProfileSerializer,
-                          FollowListSerializer)
+                          FollowListSerializer,)
+from request_responses import *
 User = get_user_model()
 
 
@@ -107,22 +110,29 @@ class FollowRequestView(APIView):
 
         if follower == following:
             return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
             followlist = Followlist.objects.get(follower=follower, following=following)
             if followlist.reqstatus == 'accepted':
-                return Response({'detail': 'You are already following this user.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': FOLLOWING_EXISTS}, status=status.HTTP_400_BAD_REQUEST)
             elif followlist.reqstatus == 'pending':
-                return Response({'detail': 'You have a pending follow request to this user.'}, status=status.HTTP_400_BAD_REQUEST)
+                action = request.data.get('action')
+                if action == 'cancel':
+                    followlist.delete()
+                    return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
+                return Response({'detail': PENDING_FOLLOW_REQUEST}, status=status.HTTP_400_BAD_REQUEST)
         except Followlist.DoesNotExist:
             pass
 
         if following.profile.public:
             Followlist.objects.create(follower=follower, following=following, reqstatus='accepted')
-            return Response({'detail': 'You are now following this user.'}, status=status.HTTP_201_CREATED)
+            return Response({'detail': FOLLOWING_SUCCESS}, status=status.HTTP_201_CREATED)
         else:
             Followlist.objects.create(follower=follower, following=following, reqstatus='pending')
-            return Response({'detail': 'Following request sent and pending approval'}, status=status.HTTP_201_CREATED)
+            action = request.data.get('action')
+            if action == 'cancel':
+                followlist.delete()
+                return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
+            return Response({'detail': PENDING_APPROVAL}, status=status.HTTP_201_CREATED)
 
 
 class AcceptFollowRequest(APIView):
@@ -138,14 +148,16 @@ class AcceptFollowRequest(APIView):
         try:
             followlist = Followlist.objects.get(follower=follower, following=following, reqstatus='pending')
         except Followlist.DoesNotExist:
-            return Response({'detail': 'Friend request not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': REQUEST_NOT_FOUND }, status=status.HTTP_400_BAD_REQUEST)
         action = request.data.get('action')
         if action == 'accept':
             followlist.reqstatus = 'accepted'
             followlist.save()
-            return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)
+            return Response({'detail': REQUEST_ACCEPTED}, status=status.HTTP_200_OK)
         elif action == 'cancel':
             followlist.delete()
-            return Response({'detail': 'Friend request canceled'}, status=status.HTTP_200_OK)
+            return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
+
+
