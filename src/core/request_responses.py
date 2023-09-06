@@ -1,0 +1,8 @@
+FOLLOWING_EXISTS = 'You are already following this user.'
+REQUEST_CANCELED = 'Follow request canceled.'
+PENDING_FOLLOW_REQUEST = 'You have a pending follow request to this user.'
+FOLLOWING_SUCCESS = 'You are now following this user.'
+PENDING_APPROVAL = 'Following request sent and pending approval'
+USER_NOT_FOUND = 'User not found'
+REQUEST_NOT_FOUND = 'Friend request not found'
+REQUEST_ACCEPTED = 'Friend request accepted'

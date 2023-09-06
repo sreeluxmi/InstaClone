@@ -13,9 +13,8 @@ from django.contrib.auth import get_user_model
 from .models import (Profile, Followlist)
 from .serializers import (UserSerializer,
                           UserLoginSerializer,
-                          ProfileSerializer,
-                          FollowListSerializer,)
-from request_responses import *
+                          ProfileSerializer,)
+from core.request_responses import *
 User = get_user_model()
 
 
@@ -159,5 +158,3 @@ class AcceptFollowRequest(APIView):
             return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
-
-
