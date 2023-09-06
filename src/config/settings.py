@@ -109,7 +109,7 @@ if env.bool('DATABASE_URL', default=None) is None:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'instaclone',
             'USER': 'postgres',
-            'PASSWORD': 'codelynks',
+            'PASSWORD': 'superuser123',
             'HOST': 'localhost',
             'PORT': '5432'
         }

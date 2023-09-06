@@ -155,3 +155,81 @@ class Unfollow(APIView):
             return Response({"detail": "You have unfollowed ."})
 
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND)   
+
+
+
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Followlist
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class FollowRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        follower = request.user
+        following_id = request.data.get('following_id')
+        following = get_object_or_404(User, id=following_id)
+
+        if follower == following:
+            return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        followlist, created = Followlist.objects.get_or_create(follower=follower, following=following)
+
+        if followlist.reqstatus == 'accepted':
+            return Response({'detail': 'You are already following this user.'}, status=status.HTTP_400_BAD_REQUEST)
+        elif followlist.reqstatus == 'pending':
+            action = request.data.get('action', 'request')
+            if action == 'cancel':
+                followlist.delete()
+                return Response({'detail': 'Follow request canceled.'}, status=status.HTTP_200_OK)
+            return Response({'detail': 'You have a pending follow request for this user.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if following.profile.public:
+            followlist.reqstatus = 'accepted'
+            followlist.save()
+            return Response({'detail': 'You are now following this user.'}, status=status.HTTP_201_CREATED)
+        else:
+            followlist.reqstatus = 'pending'
+            followlist.save()
+            action = request.data.get('action', 'request')
+            if action == 'cancel':
+                followlist.delete()
+                return Response({'detail': 'Follow request canceled.'}, status=status.HTTP_200_OK)
+            return Response({'detail': 'Follow request sent for approval.'}, status=status.HTTP_201_CREATED)
+
+
+class AcceptFollowRequest(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        following = request.user
+        follower_id = request.data.get('follower_id')
+        follower = get_object_or_404(User, id=follower_id)
+
+        followlist = get_object_or_404(Followlist, follower=follower, following=following, reqstatus='pending')
+        
+        action = request.data.get('action', 'accept')
+        if action == 'accept':
+            followlist.reqstatus = 'accepted'
+            followlist.save()
+            return Response({'detail': 'Follow request accepted.'}, status=status.HTTP_200_OK)
+        elif action == 'cancel':
+            followlist.delete()
+            return Response({'detail': 'Follow request canceled.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid action.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Unfollow(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id): 
+        user_to_unfollow = get_object_or_404(User, id=id)
+        following = get_object_or_404(Followlist, follower=request.user, following=user_to_unfollow, reqstatus='accepted')
+
+        following.delete()
+        return Response({"detail": "You have unfollowed this user."})
