@@ -65,38 +65,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        profile_data = serializer.data
-        profile_data['followers'] = self.get_followers_list(instance)
-        profile_data['following'] = self.get_following_list(instance)
-        return Response(profile_data)
+        return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
+            return self.get_paginated_response(serializer.data) 
         serializer = self.get_serializer(queryset, many=True)
-        profiles_with_followers = []
-        for profile_data in serializer.data:
-            profile = Profile.objects.get(user_id=profile_data['user'])
-            profile_data['followers'] = self.get_followers_list(profile)
-            profile_data['following'] = self.get_following_list(profile)
-            profiles_with_followers.append(profile_data)
-        return Response(profiles_with_followers)
-
-    def get_followers_list(self, profile):
-        followers = Followlist.objects.filter(following=profile.user, reqstatus='accepted')
-        follower_user_ids = followers.values_list('follower_id', flat=True)
-        follower_users = User.objects.filter(id__in=follower_user_ids)
-        return UserSerializer(follower_users, many=True).data
-
-    def get_following_list(self, profile):
-        following = Followlist.objects.filter(follower=profile.user, reqstatus='accepted')
-        following_user_ids = following.values_list('following_id', flat=True)
-        following_users = User.objects.filter(id__in=following_user_ids)
-        return UserSerializer(following_users, many=True).data
+        return Response(serializer.data)
 
 
 class FollowRequestView(APIView):
@@ -111,6 +89,7 @@ class FollowRequestView(APIView):
             return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             followlist = Followlist.objects.get(follower=follower, following=following)
+            print(followlist)
             if followlist.reqstatus == 'accepted':
                 return Response({'detail': FOLLOWING_EXISTS}, status=status.HTTP_400_BAD_REQUEST)
             elif followlist.reqstatus == 'pending':
@@ -144,6 +123,7 @@ class AcceptFollowRequest(APIView):
             follower = User.objects.get(id=follower_id)
         except User.DoesNotExist:
             return Response({'detail': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             followlist = Followlist.objects.get(follower=follower, following=following, reqstatus='pending')
         except Followlist.DoesNotExist:
@@ -158,3 +138,20 @@ class AcceptFollowRequest(APIView):
             return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Unfollow(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id): 
+        try:
+            user_to_unfollow = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        following = Followlist.objects.get(follower=request.user, following=user_to_unfollow, reqstatus='accepted')
+        if following:
+            following.delete()
+            return Response({"detail": "You have unfollowed ."})
+
+        return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND)   
