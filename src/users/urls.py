@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (UserRegistrationView, UserLoginView,
+from .views import (home, UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
                     AcceptFollowRequest, Unfollow)
 
@@ -11,6 +11,7 @@ router.register(r'profile', ProfileViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
+    path('home/', home),
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('login/', UserLoginView.as_view(), name='user-login'),
     path('follow_request/', FollowRequestView.as_view()),

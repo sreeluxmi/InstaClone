@@ -1,5 +1,5 @@
 # DJANGO
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
+
 from django.contrib.auth import get_user_model
 
 # LOCAL
@@ -19,6 +20,9 @@ User = get_user_model()
 
 
 class UserRegistrationView(generics.CreateAPIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/signup.html'
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -28,6 +32,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class UserLoginView(APIView):
+
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
 
@@ -64,6 +69,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        print("instance", instance)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -153,3 +159,7 @@ class Unfollow(APIView):
             return Response({"detail": "You have unfollowed ."})
 
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND) 
+
+
+def home(request):
+    return render(request, 'user/login.html')
