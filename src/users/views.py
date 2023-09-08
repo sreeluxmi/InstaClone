@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
-
+from django.shortcuts import redirect
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
 # LOCAL
@@ -42,15 +43,18 @@ class UserLoginView(APIView):
 
             user = User.objects.filter(username=username).first()
             if user is None or not user.check_password(password):
-                return Response({'detail': 'Invalid credentials'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+                # return Response({'detail': 'Invalid credentials'},
+                #                 status=status.HTTP_401_UNAUTHORIZED)
+                return JsonResponse({"detail": 'Invalid credentials'}, status=401)
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            return Response({'access_token': access_token})
+            # return Response({'access_token': access_token})
+            return JsonResponse({'redirect_url': '/users/feed/'}, status=200)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'success': False}, status=400)
 
 
 class RetrieveUser(generics.RetrieveAPIView):
@@ -163,3 +167,7 @@ class Unfollow(APIView):
 
 def home(request):
     return render(request, 'user/login.html')
+
+
+def landingPage(request):
+    return render(request, 'feed.html')

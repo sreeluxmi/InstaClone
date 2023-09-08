@@ -12,16 +12,18 @@ $(document).ready(function(){
         var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type:"POST",
-            url : "/login/",
+            url : "/users/loginAPI/",
             dataType: "json",
             data :formData,
             headers: {
                 "X-CSRFToken":csrfToken
             },
             success: function(response){
-                alert("Login successfull")
+                window.location.href = response.redirect_url;
+                console.log(response)
+                // // alert("Login successfull")
             },
-            error: function(xhr, textStatus, errorThrown){
+            error: function(xhr){
                 if (xhr.status === 401){
                     alert("Invalid credentials.Please try again");    
                 } else{

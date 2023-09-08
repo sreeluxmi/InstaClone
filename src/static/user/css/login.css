@@ -1,3 +1,10 @@
-.login-form{
-    border: 1px solid black;
+.outer-main-div{
+    /* border: 1px solid gray;
+    border-radius: 10px; */
+    margin-top: 3rem;
+}
+.login-button{
+    background: #386bc0;
+    color: white;
+    width: 100%;
 }
