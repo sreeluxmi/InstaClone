@@ -1,13 +1,12 @@
 # DJANGO
 from django.shortcuts import get_object_or_404, render
-from rest_framework import status, viewsets
+from rest_framework import status, request, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
-from django.shortcuts import redirect
+from rest_framework.generics import GenericAPIView
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
@@ -21,15 +20,28 @@ User = get_user_model()
 
 
 class UserRegistrationView(generics.CreateAPIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'user/signup.html'
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def perform_create(self, serializer):
         user = serializer.save()
         Profile.objects.create(user=user)
+ 
+
+# class UserRegistrationView(GenericAPIView):
+#     serializer_class = UserSerializer
+
+#     def post(self, request):
+#         serialzer = self.serializer_class(data=request.data)
+
+#         if serialzer.is_valid():
+#             user = serialzer.save()
+#             self.perform_create(user)
+#             return JsonResponse({'success': True}, status=201)
+#         return JsonResponse({'success': False}, status=400)
+
+#     def perform_create(self, user):
+#         Profile.objects.create(user=user)
 
 
 class UserLoginView(APIView):
@@ -163,6 +175,10 @@ class Unfollow(APIView):
             return Response({"detail": "You have unfollowed ."})
 
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND) 
+
+
+def signup(request):
+    return render(request, 'user/signup.html')
 
 
 def home(request):
