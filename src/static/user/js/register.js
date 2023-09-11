@@ -1,32 +1,36 @@
-$(document).ready(function(){
-    $("#registerForm").submit(function(event){
+$(document).ready(function () {
+    $("#registerForm").submit(function (event) {
         event.preventDefault();
 
         var formData = {
-            username :$("#username").val(),
-            email : $("#email").val(),
-            password : $("#password").val()
-        }
-        console.log(formData.username)
-        console.log(formData.email)
-        console.log(formData.password)
+            username: $("#username").val(),
+            email: $("#email").val(),
+            password: $("#password").val()
+        };
 
-        $.ajax({
-            type:"POST",
-            url : "/users/register/",
-            dataType: "json",
-            data:formData,
-            success: function(response){
-                window.location.href = '/users/home/'
-                // console.log("Register successfull")
+        console.log(formData.username);
+        console.log(formData.email);
+        console.log(formData.password);
+
+        fetch("/users/register/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
             },
-            error: function(response){
-                if (response.status === 400){
-                    console.log("A user with that username already exists.")
-                } else{
-                    console.log("An error occurred")
-                }
-            }
+            body: JSON.stringify(formData),
         })
-    })
-})
+            .then(function (response) {
+                if (response.ok) {
+                    window.location.href = '/users/home/';
+                } else if (response.status === 400) {
+                    console.log("A user with that username already exists.");
+                } else {
+                    throw new Error("An error occurred");
+                }
+            })
+            .catch(function (error) {
+                console.error(error);
+                console.log("An error occurred");
+            });
+    });
+});

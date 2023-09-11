@@ -103,6 +103,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if request.user.is_authenticated:
             user_profile = self.filter_queryset(self.queryset).get(user=request.user)
             serializer = ProfileSerializer(user_profile)
+            print(serializer.data)
             return Response(serializer.data)
         else:
             return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)

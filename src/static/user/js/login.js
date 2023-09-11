@@ -1,38 +1,39 @@
-$(document).ready(function(){
-    $("#login-form").submit(function(event){
+$(document).ready(function () {
+    $("#login-form").submit(function (event) {
         event.preventDefault();
 
         var formData = {
-        username :$("#username").val(),
-        password :$("#password").val()
-        }
-        console.log(formData.username)
-        console.log(formData.password)
+            username: $("#username").val(),
+            password: $("#password").val()
+        };
+
+        console.log(formData.username);
+        console.log(formData.password);
 
         var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-        $.ajax({
-            type:"POST",
-            url : "/users/loginAPI/",
 
-
-            dataType: "json",
-            data :formData,
+        fetch("/users/loginAPI/", {
+            method: "POST",
             headers: {
-                "X-CSRFToken":csrfToken
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
             },
-            success: function(response){
-                var access_token = response.access_token;
-                localStorage.setItem('access_token', access_token)
-                window.location.href = response.redirect_url;
-                // // alert("Login successfull")
-            },
-            error: function(xhr){
-                if (xhr.status === 401){
-                    alert("Invalid credentials.Please try again");    
-                } else{
-                    alert("An error occurred")
-                }
-            }
+            body: JSON.stringify(formData)
         })
-    })
-})
+            .then(function (response) {
+                if (response.status === 401) {
+                    alert("Invalid credentials. Please try again");
+                } else if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("An error occurred");
+                }
+            })
+            .then(function (data) {
+                var access_token = data.access_token;
+                localStorage.setItem('access_token', access_token);
+                window.location.href = data.redirect_url;
+            })
+    });
+});
+
