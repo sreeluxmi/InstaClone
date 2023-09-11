@@ -1,12 +1,12 @@
 # DJANGO
 from django.shortcuts import get_object_or_404, render
-from rest_framework import status, request, viewsets
+from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import GenericAPIView
+from rest_framework.decorators import action
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
@@ -63,7 +63,8 @@ class UserLoginView(APIView):
             access_token = str(refresh.access_token)
 
             # return Response({'access_token': access_token})
-            return JsonResponse({'redirect_url': '/users/feed/'}, status=200)
+            return JsonResponse({'access_token': access_token, 'redirect_url': '/users/feed/'}, status=200)
+
         else:
             # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             return JsonResponse({'success': False}, status=400)
@@ -85,7 +86,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        print("instance", instance)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -97,6 +97,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(methods=['GET'], detail=False)
+    def me(self, request):
+        if request.user.is_authenticated:
+            user_profile = self.filter_queryset(self.queryset).get(user=request.user)
+            serializer = ProfileSerializer(user_profile)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class FollowRequestView(APIView):
@@ -187,3 +196,7 @@ def home(request):
 
 def landingPage(request):
     return render(request, 'feed.html')
+
+
+def profile_view_page(request):
+    return render(request, 'user/profile.html')

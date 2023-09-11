@@ -9,16 +9,20 @@ $(document).ready(function(){
         console.log(formData.username)
         console.log(formData.password)
 
-        // var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
+        var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type:"POST",
             url : "/users/loginAPI/",
+
+
             dataType: "json",
             data :formData,
-            // headers: {
-            //     "X-CSRFToken":csrfToken
-            // },
+            headers: {
+                "X-CSRFToken":csrfToken
+            },
             success: function(response){
+                var access_token = response.access_token;
+                localStorage.setItem('access_token', access_token)
                 window.location.href = response.redirect_url;
                 // // alert("Login successfull")
             },
@@ -32,4 +36,3 @@ $(document).ready(function(){
         })
     })
 })
-
