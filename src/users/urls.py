@@ -17,7 +17,7 @@ urlpatterns = [
     path('home/', home),
     path('feed/', landingPage, name="feed"),
     path('me/', profile_view_page, name="profile"),
-    path('profile-update/<int:id>/', profile_update, name="update-profile"),
+    path('profile-update/', profile_update, name="update-profile"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),

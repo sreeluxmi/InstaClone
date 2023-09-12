@@ -106,6 +106,18 @@ class ProfileViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         else:
             return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+      
+    @action(methods=['PUT'], detail=False)
+    def update_profile(self, request):
+        if request.user.is_authenticated:
+            user_profile = self.filter_queryset(self.queryset).get(user=request.user)
+            serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class FollowRequestView(APIView):
@@ -202,5 +214,5 @@ def profile_view_page(request):
     return render(request, 'user/profile.html')
 
 
-def profile_update(request, id):
+def profile_update(request):
     return render(request, 'user/updatepro.html')
