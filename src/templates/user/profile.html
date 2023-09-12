@@ -28,7 +28,7 @@
                 </div>
 
                 <h2 class="profile-name"></h2>
-                <button class='profile-edit-button'>Edit profile</button>   
+                <button class='profile-edit-button' id="myButton">Edit profile</button>   
 
                 <div class="row">
                     <div class='col-1'>
@@ -40,10 +40,16 @@
                 </div>
 
                 <div class="profile-bio">
-                    <p>bio: <span></span></p>
+                    <p><span></span></p>
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            document.getElementById("myButton").onclick = function () {
+                location.href = "/users/profile-update/";
+            };
+        </script>
 
     </body>
 </html>

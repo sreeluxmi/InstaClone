@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (signup, home, landingPage,
-                    profile_view_page,
+                    profile_view_page, profile_update,
                     UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
                     AcceptFollowRequest, Unfollow)
@@ -17,6 +17,7 @@ urlpatterns = [
     path('home/', home),
     path('feed/', landingPage, name="feed"),
     path('me/', profile_view_page, name="profile"),
+    path('profile-update/<int:id>/', profile_update, name="update-profile"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),

@@ -32,4 +32,15 @@ $(document).ready(function () {
             container.appendChild(img);
         })
     }
+
+    if(access_token){
+        fetch(`/users/api/profile/${id}`,{
+            method: "PUT",
+            headers:{
+                "Authorization" : "Bearer" + access_token
+            }
+        }).then(function(data){
+            console.log("data",data)
+        })
+    }
 });

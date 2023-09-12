@@ -200,3 +200,7 @@ def landingPage(request):
 
 def profile_view_page(request):
     return render(request, 'user/profile.html')
+
+
+def profile_update(request, id):
+    return render(request, 'user/updatepro.html')
