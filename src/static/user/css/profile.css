@@ -1,0 +1,35 @@
+body {
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+.container {
+	margin-top: 3rem;
+}
+#profile-image img{
+    border-radius: 50%;
+    width: 4rem;
+    height :4rem;
+    float: left;
+    margin-right: 3rem;
+}
+.profile-name{
+    font-size: 2.3rem;
+    font-weight: 300;   
+}
+.profile-edit-button{
+    background: none;
+    border: 1px solid #dbdbdb;
+    border-radius:0.4rem ;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 300; 
+}
+
+ul{
+    list-style-type: none;    
+}
+
+
+
+
+

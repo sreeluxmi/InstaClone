@@ -28,9 +28,5 @@ $(document).ready(function () {
                     throw new Error("An error occurred");
                 }
             })
-            .catch(function (error) {
-                console.error(error);
-                console.log("An error occurred");
-            });
     });
 });

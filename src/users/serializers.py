@@ -26,10 +26,11 @@ class UserLoginSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
+    username = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Profile
-        fields = ["user", "bio", "profile_pic", "public", "followers", "following"]
+        fields = ["username", "bio", "profile_pic", "public", "followers", "following"]
 
     def get_followers(self, obj):
         return self.get_followers_list(obj.user)

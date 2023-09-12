@@ -16,7 +16,7 @@ urlpatterns = [
     path('signup/', signup, name="signup"),
     path('home/', home),
     path('feed/', landingPage, name="feed"),
-    path('profile/', profile_view_page, name="profile"),
+    path('me/', profile_view_page, name="profile"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
