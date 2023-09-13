@@ -83,26 +83,48 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['user']
+    search_fields = ['user__username']
 
-    @action(methods=['GET', 'PATCH'], detail=False)
-    def me(self, request):
-        if request.user.is_authenticated:
-            if request.method == 'GET':
-                print("get")
-                user_profile = self.filter_queryset(self.queryset).get(user=request.user)
-                serializer = ProfileSerializer(user_profile)
-                return Response(serializer.data)
-            elif request.method == 'PATCH':
-                print("patch")
-                serializer = ProfileSerializer(request.user, request.data, partial=True)
-                print(serializer)
-                if serializer.is_valid():
-                    print("if")
-                    serializer.save()
-                    return Response(serializer.data)
-        else:
+    @action(detail=False, methods=['GET', 'PUT'])
+    def me(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
             return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user_profile, created = Profile.objects.get_or_create(user=request.user)
+        if request.method == 'GET':
+            serializer = ProfileSerializer(user_profile)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    # @action(detail=False, methods=['GET', 'PUT'])
+    # def me(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         if request.method == 'GET':
+    #             print("get")
+    #             user_profile = self.filter_queryset(self.queryset).get(user=request.user)
+    #             serializer = ProfileSerializer(user_profile)
+    #             return Response(serializer.data)
+    #         elif request.method == 'PUT':
+    #             print("patch")
+    #             self.get_object = lambda: request.user.profile
+    #             return self.retrieve(request, *args, **kwargs)
+    #             # user_profile = self.filter_queryset(self.queryset).get(user=request.user)
+    #             # serializer = ProfileSerializer(user_profile, request.data, partial=True)
+    #             # print(serializer)
+    #             # if serializer.is_valid():
+    #             #     print("if")
+    #             #     serializer.save()
+    #             #     return Response(serializer.data)
+    #             # else:
+    #             #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)               
+    #     else:
+    #         return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 class FollowRequestView(APIView):

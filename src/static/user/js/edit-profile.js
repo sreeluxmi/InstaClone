@@ -1,6 +1,5 @@
 $(document).ready(function () {
     var access_token = localStorage.getItem('access_token');
-    var userData;
 
     if (access_token) {
         fetch("/users/api/profile/me/", {
@@ -19,10 +18,6 @@ $(document).ready(function () {
             }
         })
         .then(function (data) {
-            console.log(data)
-
-            userData = data;
-
             $("#bio").val(data.bio);
         })
 
@@ -32,10 +27,9 @@ $(document).ready(function () {
             const dataToUpdate = {
                 bio : document.getElementById('bio').value,
             };
-            console.log(userData)
             
-            fetch(`/users/api/profile/`, {
-                method: "PATCH",
+            fetch("/users/api/profile/", {
+                method: "PUT",
                 headers: {
                     "Authorization": "Bearer " + access_token,
                     "Content-Type": "application/json" 
