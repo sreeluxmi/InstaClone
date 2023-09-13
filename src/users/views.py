@@ -1,8 +1,7 @@
 # DJANGO
 from django.shortcuts import get_object_or_404, render
-from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import generics
+from rest_framework import generics, status, viewsets, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -83,27 +82,25 @@ class UpdateUser(generics.UpdateAPIView):
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user']
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @action(methods=['GET'], detail=False)
+    @action(methods=['GET', 'PATCH'], detail=False)
     def me(self, request):
         if request.user.is_authenticated:
-            user_profile = self.filter_queryset(self.queryset).get(user=request.user)
-            serializer = ProfileSerializer(user_profile)
-            return Response(serializer.data)
+            if request.method == 'GET':
+                print("get")
+                user_profile = self.filter_queryset(self.queryset).get(user=request.user)
+                serializer = ProfileSerializer(user_profile)
+                return Response(serializer.data)
+            elif request.method == 'PATCH':
+                print("patch")
+                serializer = ProfileSerializer(request.user, request.data, partial=True)
+                print(serializer)
+                if serializer.is_valid():
+                    print("if")
+                    serializer.save()
+                    return Response(serializer.data)
         else:
             return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 

@@ -20,6 +20,8 @@ class Profile(models.Model):
 
 class Followlist(models.Model):
     STATUS_CHOICE = (
+
+        
         ('pending', 'Pending'),
         ('accepted', 'Accpeted'),
         ('rejected', 'Rejected')
