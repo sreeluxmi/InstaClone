@@ -8,12 +8,15 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>        
+        <script src="{% static 'user/js/edit-profile.js' %}"></script>
     </head>
     <body>
             <div class="container">
                 <h2>Update Profile</h2>
                 <form id="update-profile-form">
                     <div class="form-group">
+                        
                         <label for="bio">Bio:</label>
                         <textarea class="form-control" id="bio" name="bio"></textarea>
                     </div>
