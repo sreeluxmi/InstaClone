@@ -8,7 +8,7 @@ $(document).ready(function () {
                 "Authorization": "Bearer " + access_token
             }
         })
-        .then(function (response) {
+        .then(response => {
             if (response.ok) {
                 return response.json();
             } else if (response.status === 401) {
@@ -24,28 +24,33 @@ $(document).ready(function () {
         $("#update-profile-form").submit(function (event) {
             event.preventDefault();
             
-            const dataToUpdate = {
+            const newData = {
                 bio : document.getElementById('bio').value,
             };
             
-            fetch("/users/api/profile/", {
-                method: "PUT",
+            fetch("/users/api/profile/me/", {
+                method: "PATCH",
                 headers: {
                     "Authorization": "Bearer " + access_token,
                     "Content-Type": "application/json" 
                 },
-                body: JSON.stringify(dataToUpdate)
+                body: JSON.stringify(newData)
             })
-            .then(function (response) {
+            
+            
+            .then(response =>{
                 console.log(response)
-                if (response.ok) {
+                if(response.ok){
+                    window.location.href = "/users/api/profile/me/"
                     console.log("Profile updated")
-                    window.location.href = '/users/me/'
-                    // return response.json();
-                } else {
-                    alert("An error occurred while updating the profile.");
+                    return response.json()
+                }else{
+                    alert("Some error occured")
                 }
-            })
+            });
+
         });             
     }
 });
+
+

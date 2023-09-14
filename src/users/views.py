@@ -85,23 +85,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__username']
 
-    @action(detail=False, methods=['GET', 'PUT'])
+    @action(detail=False, methods=['GET', 'PATCH'])
     def me(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        self.get_object = lambda: request.user.profile
+        if request.method == "GET":
+            return self.retrieve(request, *args, **kwargs)
+        elif request.method == 'PATCH':
+            return self.partial_update(request, *args, **kwargs) 
 
-        user_profile, created = Profile.objects.get_or_create(user=request.user)
-        if request.method == 'GET':
-            serializer = ProfileSerializer(user_profile)
-            return Response(serializer.data)
-        elif request.method == 'PUT':
-            serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    # @action(detail=False, methods=['GET', 'PUT'])
+    # @action(detail=False, methods=['GET', 'PATCH'])
     # def me(self, request, *args, **kwargs):
     #     if request.user.is_authenticated:
     #         if request.method == 'GET':
@@ -109,7 +101,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     #             user_profile = self.filter_queryset(self.queryset).get(user=request.user)
     #             serializer = ProfileSerializer(user_profile)
     #             return Response(serializer.data)
-    #         elif request.method == 'PUT':
+    #         elif request.method == 'PATCH':
     #             print("patch")
     #             self.get_object = lambda: request.user.profile
     #             return self.retrieve(request, *args, **kwargs)
@@ -124,7 +116,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
     #             #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)               
     #     else:
     #         return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 class FollowRequestView(APIView):
@@ -227,3 +218,7 @@ def profile_update(request):
 
 def profile_list(request):
     return render(request, "user/userlist.html")
+
+
+def single_profile(request, pk):
+    return render(request, 'user/singleProfile.html', {'id': pk})
