@@ -19,6 +19,17 @@
         <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
         <!--js-->
         <script src="{% static 'user/js/singleProfile.js' %}"></script>
+        <style>
+            #follow-button {
+                color: #3399FF;
+                background-color: #ffffff;
+                border: 1px solid #3399FF;
+                border-radius: 3px;
+                margin-left :5rem;
+                width:6rem;
+                height: 30px;
+                }
+        </style>
     </head>
     <body>
         <div class='container'>
@@ -43,6 +54,7 @@
                 <div class="profile-bio">
                     <p><span></span></p>
                 </div>
+                <button id="follow-button">Follow</button>
             </div>
         </div>
 

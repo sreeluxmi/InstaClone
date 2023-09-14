@@ -105,7 +105,7 @@ $(document).ready(function(){
                     nameLink.style.textDecoration = "none"
                     nameLink.style.color = "black"
                     nameLink.textContent = `${item.username}`;
-                    nameLink.href = `/users/api/profile/${item.user}`; 
+                    nameLink.href = `/users/single-profile/${item.user}`; 
                     profileContainer.appendChild(nameLink);
 
 
