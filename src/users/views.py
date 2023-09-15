@@ -85,6 +85,17 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__username']
 
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset()).exclude(user=request.user)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['GET', 'PATCH'])
     def me(self, request, *args, **kwargs):
         self.get_object = lambda: request.user.profile
@@ -130,28 +141,28 @@ class FollowRequestView(APIView):
             return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             followlist = Followlist.objects.get(follower=follower, following=following)
-            print(followlist)
+            print("followlist", followlist)
             if followlist.reqstatus == 'accepted':
-                return Response({'detail': FOLLOWING_EXISTS}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': FOLLOWING_EXISTS, 'reqstatus': 'accepted'}, status=status.HTTP_400_BAD_REQUEST)
             elif followlist.reqstatus == 'pending':
                 action = request.data.get('action')
                 if action == 'cancel':
                     followlist.delete()
-                    return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
-                return Response({'detail': PENDING_FOLLOW_REQUEST}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'accepted'}, status=status.HTTP_200_OK)
+                return Response({'detail': PENDING_FOLLOW_REQUEST, 'reqstatus': 'accepted'}, status=status.HTTP_400_BAD_REQUEST)
         except Followlist.DoesNotExist:
             pass
 
         if following.profile.public:
             Followlist.objects.create(follower=follower, following=following, reqstatus='accepted')
-            return Response({'detail': FOLLOWING_SUCCESS}, status=status.HTTP_201_CREATED)
+            return Response({'detail': FOLLOWING_SUCCESS, 'reqstatus': 'accepted'}, status=status.HTTP_201_CREATED)
         else:
             Followlist.objects.create(follower=follower, following=following, reqstatus='pending')
             action = request.data.get('action')
             if action == 'cancel':
                 followlist.delete()
-                return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
-            return Response({'detail': PENDING_APPROVAL}, status=status.HTTP_201_CREATED)
+                return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'accepted'}, status=status.HTTP_200_OK)
+            return Response({'detail': PENDING_APPROVAL, 'reqstatus': 'accepted'}, status=status.HTTP_201_CREATED)
 
 
 class AcceptFollowRequest(APIView):

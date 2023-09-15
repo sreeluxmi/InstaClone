@@ -27,7 +27,7 @@ $(document).ready(function(){
             if (data && data.length > 0) { 
                 for (let i = 0; i < data.length; i++) {
                     const item = data[i]
-
+                    
                     const profileContainer = document.createElement("div");
                     profileContainer.style.height = "60px";
                     profileContainer.className = "user-profile";
