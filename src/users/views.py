@@ -102,7 +102,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if request.method == "GET":
             return self.retrieve(request, *args, **kwargs)
         elif request.method == 'PATCH':
-            return self.partial_update(request, *args, **kwargs) 
+            return self.partial_update(request, *args, **kwargs)
 
     # @action(detail=False, methods=['GET', 'PATCH'])
     # def me(self, request, *args, **kwargs):
