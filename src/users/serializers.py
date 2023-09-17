@@ -28,9 +28,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     following = serializers.SerializerMethodField()
     username = serializers.ReadOnlyField(source='user.username')
 
+    follow_requests = serializers.SerializerMethodField() 
+
     class Meta:
         model = Profile
-        fields = ["user", "username", "bio", "profile_pic", "public", "followers", "following"]
+        fields = ["user", "username", "bio", "profile_pic", "public", "followers", "following", "follow_requests"]
 
     def get_followers(self, obj):
         return self.get_followers_list(obj.user)
@@ -50,8 +52,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         following_users = User.objects.filter(id__in=following_user_ids)
         return UserSerializer(following_users, many=True).data
 
+    def get_follow_requests(self, obj):
+        follow_requests = Followlist.objects.filter(following=obj.user, reqstatus='pending')
+        return FollowListSerializer(follow_requests, many=True).data
 
-class FollowListSerializer(serializers.Serializer):
+
+class FollowListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Followlist
-        fields = ['follower', 'following', 'reqstatus']
+        fields = ['id', 'follower', 'following', 'reqstatus']
+

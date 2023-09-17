@@ -148,8 +148,8 @@ class FollowRequestView(APIView):
                 action = request.data.get('action')
                 if action == 'cancel':
                     followlist.delete()
-                    return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'accepted'}, status=status.HTTP_200_OK)
-                return Response({'detail': PENDING_FOLLOW_REQUEST, 'reqstatus': 'accepted'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'rejected'}, status=status.HTTP_200_OK)
+                return Response({'detail': PENDING_FOLLOW_REQUEST, 'reqstatus': 'pending'}, status=status.HTTP_400_BAD_REQUEST)
         except Followlist.DoesNotExist:
             pass
 
@@ -161,8 +161,8 @@ class FollowRequestView(APIView):
             action = request.data.get('action')
             if action == 'cancel':
                 followlist.delete()
-                return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'accepted'}, status=status.HTTP_200_OK)
-            return Response({'detail': PENDING_APPROVAL, 'reqstatus': 'accepted'}, status=status.HTTP_201_CREATED)
+                return Response({'detail': REQUEST_CANCELED, 'reqstatus': 'rejected'}, status=status.HTTP_200_OK)
+            return Response({'detail': PENDING_APPROVAL, 'reqstatus': 'pending'}, status=status.HTTP_201_CREATED)
 
 
 class AcceptFollowRequest(APIView):

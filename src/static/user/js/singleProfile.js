@@ -28,14 +28,14 @@ $(document).ready(function(){
             container.appendChild(img); 
             console.log(data)
 
-            $('#follow-button').attr('class', data.private)
-            
+            const isPublic = data.public;
+
             $("#follow-button").click(function(element){
-                profileType =element.target.className
-                console.log(profileType)
+               console.log(isPublic)
                 const userToFollow = {
                     following_id: user_id
                 };
+
     
             fetch("/users/follow_request/", {
                 method: "POST",
@@ -48,14 +48,17 @@ $(document).ready(function(){
             })
             .then(function (response) {
                 if (response.ok) {
-                    $("#follow-button").text("Following");
+                    if (data.public) {
+                        $("#follow-button").text("Following");
+                    } else {
+                        $("#follow-button").text("Requested");
+                    }
                 } else {
                     alert("Error sending follow request.");
                 }
             })  
         })            
         })
-
 
     }
 });
