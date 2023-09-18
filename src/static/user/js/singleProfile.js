@@ -29,6 +29,12 @@ $(document).ready(function(){
             container.appendChild(img); 
 
             const isPublic = data.public;
+            if (data.follow_requests.length > 0 && data.follow_requests[0].reqstatus === 'pending') {
+                $("#follow-request-message").text(`You have a follow request from `);
+                $("#accept-request-container").show();
+            } else {
+                $("#accept-request-container").hide();
+            }
 
             $('#cancel-request-button, #accept-request-button').click(function(){
                 const buttonValue = $(this).text();
@@ -45,14 +51,15 @@ $(document).ready(function(){
                     body : JSON.stringify(acceptRequest)
                 })
                 .then(function(response){
-                    if (response.ok){
-                        if (buttonValue == "accept"){
-                            console.log("Request accepted")
-                        }else{
-                            console.log("Request canceled")
+                    if (response.ok) {
+                        if (buttonValue == "accept") {
+                            console.log("Request accepted");
+                        } else {
+                            console.log("Request canceled");
                         }
-                    }else{
-                        alert("Invalid")
+                        $("#accept-request-container").hide();
+                    } else {
+                        alert("Invalid");
                     }
                 })
             });
@@ -73,16 +80,20 @@ $(document).ready(function(){
                 body: JSON.stringify(userToFollow)
                 })
                 .then(function (response) {
-                if (response.ok) {
-                    console.log(data.follow_requests)
-                    if (isPublic) {
-                        $("#follow-button").text("Following");
+                    if (response.ok) {
+                        console.log(data.follow_requests);
+                        if (isPublic) {
+                            $("#follow-button").text("Following");
+                        } else {
+                            if (data.follow_requests.length > 0 && data.follow_requests[0].reqstatus === 'pending') {
+                                $("#follow-button").text("Requested");
+                            } else {
+                                $("#follow-button").text("Follow");
+                            }
+                        }
                     } else {
-                        $("#follow-button").text("Requested");
+                        alert("Error sending follow request.");
                     }
-                } else {
-                    alert("Error sending follow request.");
-                }
                 })
             })              
         })
