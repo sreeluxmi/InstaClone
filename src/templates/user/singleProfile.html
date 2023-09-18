@@ -20,7 +20,7 @@
         <!--js-->
         <script src="{% static 'user/js/singleProfile.js' %}"></script>
         <style>
-            #follow-button {
+            #follow-button{
                 color: #3399FF;
                 background-color: #ffffff;
                 border: 1px solid #3399FF;
@@ -28,8 +28,18 @@
                 margin-left :5rem;
                 width:12rem;
                 height: 30px;
-                font-weight : bold;
-                }
+                font-weight : bold;}
+
+            #cancel-request-button,
+            #accept-request-button{
+                color: black;
+                background-color: #ffffff;
+                border: 1px solid black;
+                border-radius: 3px;
+                margin-left : 10px;
+                width:4rem;
+                height: 30px;
+            }
         </style>
     </head>
     <body>
@@ -39,6 +49,8 @@
                 
                 <div id="follow-request-container">
                     <p id="follow-request-message"></p>
+                    <button id="cancel-request-button">Cancel</button>
+                    <button id="accept-request-button">Accept</button>
                 </div>
                 
                 <div id="profile-image">

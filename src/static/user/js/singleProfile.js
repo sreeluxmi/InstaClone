@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
     var access_token = localStorage.getItem('access_token')
     const user_id = $('#user_id').html()
 
@@ -26,29 +27,57 @@ $(document).ready(function(){
             img.src = data.profile_pic;
             const container = document.getElementById("profile-image");
             container.appendChild(img); 
-            console.log(data)
 
+            console.log(data)
             const isPublic = data.public;
 
-            $("#follow-button").click(function(element){
+            
+            $('#cancel-request-button, #accept-request-button').click(function(){
+                console.log(data.follow_requests)
+                const buttonValue = $(this).text();
+
+                const acceptRequest = {
+                    "follower_id": user_id,
+                    "action" : buttonValue
+                }
+                fetch("/users/accept_request/",{
+                    method: "POST",
+                    headers: {
+                        "Authorization" : "Bearer " + access_token,
+                        "Content-Type" : "application/json",
+                    },
+                    body : JSON.stringify(acceptRequest)
+                })
+                .then(function(response){
+                    if (response.ok){
+                        if (buttonValue == "accept"){
+                            console.log("Request accepted")
+                        }else{
+                            console.log("Request canceled")
+                        }
+                    }else{
+                        alert("Invalid")
+                    }
+                })
+            });
+
+
+            $("#follow-button").click(function(){
                console.log(isPublic)
                 const userToFollow = {
                     following_id: user_id
                 };
-
-    
-            fetch("/users/follow_request/", {
+                fetch("/users/follow_request/", {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + access_token,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(userToFollow)
-                
-            })
-            .then(function (response) {
+                })
+                .then(function (response) {
                 if (response.ok) {
-                    if (data.public) {
+                    if (isPublic) {
                         $("#follow-button").text("Following");
                     } else {
                         $("#follow-button").text("Requested");
@@ -56,8 +85,8 @@ $(document).ready(function(){
                 } else {
                     alert("Error sending follow request.");
                 }
-            })  
-        })            
+                })
+            })              
         })
 
     }

@@ -183,11 +183,11 @@ class AcceptFollowRequest(APIView):
         # except Followlist.DoesNotExist:
         #     return Response({'detail': REQUEST_NOT_FOUND }, status=status.HTTP_400_BAD_REQUEST)
         action = request.data.get('action')
-        if action == 'accept':
+        if action == 'accept' or action == 'Accept':
             followlist.reqstatus = 'accepted'
             followlist.save()
             return Response({'detail': REQUEST_ACCEPTED}, status=status.HTTP_200_OK)
-        elif action == 'cancel':
+        elif action == 'cancel' or action == 'Cancel':
             followlist.delete()
             return Response({'detail': REQUEST_CANCELED}, status=status.HTTP_200_OK)
         else:
