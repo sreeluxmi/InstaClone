@@ -28,14 +28,10 @@ $(document).ready(function(){
             const container = document.getElementById("profile-image");
             container.appendChild(img); 
 
-            console.log(data)
             const isPublic = data.public;
 
-            
             $('#cancel-request-button, #accept-request-button').click(function(){
-                console.log(data.follow_requests)
                 const buttonValue = $(this).text();
-
                 const acceptRequest = {
                     "follower_id": user_id,
                     "action" : buttonValue
@@ -61,9 +57,10 @@ $(document).ready(function(){
                 })
             });
 
+            console.log(data.follow_requests)
+
 
             $("#follow-button").click(function(){
-               console.log(isPublic)
                 const userToFollow = {
                     following_id: user_id
                 };
@@ -77,6 +74,7 @@ $(document).ready(function(){
                 })
                 .then(function (response) {
                 if (response.ok) {
+                    console.log(data.follow_requests)
                     if (isPublic) {
                         $("#follow-button").text("Following");
                     } else {
@@ -88,6 +86,7 @@ $(document).ready(function(){
                 })
             })              
         })
+
 
     }
 });

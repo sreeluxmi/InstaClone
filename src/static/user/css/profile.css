@@ -2,9 +2,10 @@ body {
     min-height: 100vh;
     padding-bottom: 2rem;
 }
-.container {
-	margin-top: 3rem;
+.profile{
+    margin-top: 3rem;
 }
+
 #profile-image img{
     border-radius: 50%;
     width: 4rem;
@@ -29,6 +30,41 @@ ul{
     list-style-type: none;    
 }
 
+#follow-button{
+    color: #198754;
+    background-color: #ffffff;
+    border: 1px solid #198754;
+    border-radius: 3px;
+    margin-left :5rem;
+    width:12rem;
+    height: 30px;
+    font-weight : bold;
+}
+
+#follow-request-container{
+    height :auto;
+    max-width: fit-content;
+    margin-top:1rem;
+    margin-bottom : 2rem;
+    display: flex;
+    align-items: center;
+    margin-left:3rem ;
+    display: none;
+}
+#cancel-request-button,
+#accept-request-button{
+    color: black;
+    background-color: #ffffff;
+    border: 1px solid black;
+    border-radius: 3px;
+    width:4rem;
+    height: 30px;
+    margin-left: 1.5rem;
+}
+#follow-request-message{
+    width :auto;
+    height: 1rem;
+}
 
 
 
