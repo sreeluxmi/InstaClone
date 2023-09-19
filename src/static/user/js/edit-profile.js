@@ -52,31 +52,3 @@ $(document).ready(function () {
         });             
     }
 });
-
-        data.follow_requests.forEach(request => {
-            const requestDiv = document.createElement('div');
-            requestDiv.innerHTML = `
-                <p>${request.follower.username}</p>
-                <button class="accept-request" data-follower-id="${request.follower_id}">Accept</button>
-                <button class="cancel-request" data-follower-id="${request.follower_id}">Cancel</button>
-            `;
-            followRequestContainer.append(requestDiv);
-        });
-
-        $('.accept-request').click(function () {
-            const followerId = $(this).data('follower-id');
-            handleFollowRequest('accept', followerId);
-        });
- 
-        $('.cancel-request').click(function () {
-            const followerId = $(this).data('follower-id');
-            handleFollowRequest('cancel', followerId);
-        });
-            $("#follow-button").click(function(element){
-               console.log(isPublic)
-                const userToFollow = {
-                    following_id: user_id
-                };
-
-
-       

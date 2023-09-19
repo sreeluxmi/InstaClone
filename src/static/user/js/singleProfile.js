@@ -3,6 +3,7 @@ $(document).ready(function(){
     var access_token = localStorage.getItem('access_token')
     const user_id = $('#user_id').html()
 
+
     if (access_token){
         fetch(`/users/api/profile/${user_id}/`,{
             method: "GET",
@@ -18,6 +19,7 @@ $(document).ready(function(){
                 alert("An error occured")
             }
         }).then(data =>{
+            console.log(data)
             $(".profile-name").text(data.username);
             $(".profile-followers-count").text(data.followers.length); 
             $(".profile-following-count").text(data.following.length);  
@@ -29,15 +31,17 @@ $(document).ready(function(){
             container.appendChild(img); 
 
             const isPublic = data.public;
-            if (data.follow_requests.length > 0 && data.follow_requests[0].reqstatus === 'pending') {
-                $("#follow-request-message").text(`You have a follow request from `);
-                $("#accept-request-container").show();
-            } else {
-                $("#accept-request-container").hide();
+
+            if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'pending'){
+                $("#follow-request-message").text(`You have a follow request from ${data.username}`);
+            }else{
+                $("#follow-request-container").hide();
             }
+
 
             $('#cancel-request-button, #accept-request-button').click(function(){
                 const buttonValue = $(this).text();
+                console.log(buttonValue)
                 const acceptRequest = {
                     "follower_id": user_id,
                     "action" : buttonValue
@@ -52,22 +56,21 @@ $(document).ready(function(){
                 })
                 .then(function(response){
                     if (response.ok) {
-                        if (buttonValue == "accept") {
-                            console.log("Request accepted");
-                        } else {
-                            console.log("Request canceled");
+                        if (buttonValue == "accept" && buttonValue == "Accept"){
+                            $("#follow-request-container").hide();
+                        } else{
+                            $("#follow-request-container").hide();
                         }
-                        $("#accept-request-container").hide();
                     } else {
                         alert("Invalid");
                     }
                 })
-            });
-
-            console.log(data.follow_requests)
+            })
+    
 
 
             $("#follow-button").click(function(){
+
                 const userToFollow = {
                     following_id: user_id
                 };
@@ -81,21 +84,30 @@ $(document).ready(function(){
                 })
                 .then(function (response) {
                     if (response.ok) {
-                        console.log(data.follow_requests);
                         if (isPublic) {
                             $("#follow-button").text("Following");
                         } else {
-                            if (data.follow_requests.length > 0 && data.follow_requests[0].reqstatus === 'pending') {
-                                $("#follow-button").text("Requested");
-                            } else {
-                                $("#follow-button").text("Follow");
-                            }
+                            $("#follow-button").text("Requested");
                         }
                     } else {
-                        alert("Error sending follow request.");
+                        if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'accepted'){
+                            $("#follow-button").click(function(){
+                                
+                            })
+                        }
+     
                     }
                 })
-            })              
+            })
+
+            if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'accepted'){
+                $("#follow-button").text("Following")
+            }else if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'pending'){
+                $("#follow-button").text("Requested")  // create cancel button 
+            }
+            
+            
+
         })
 
 

@@ -28,11 +28,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     following = serializers.SerializerMethodField()
     username = serializers.ReadOnlyField(source='user.username')
 
-    follow_requests = serializers.SerializerMethodField() 
+    follow_requests = serializers.SerializerMethodField()
+    accept_requests = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ["user", "username", "bio", "profile_pic", "public", "followers", "following", "follow_requests"]
+        fields = ["user", "username", "bio", "profile_pic", "public",
+                  "followers", "following",
+                  "follow_requests", "accept_requests"]
 
     def get_followers(self, obj):
         return self.get_followers_list(obj.user)
@@ -53,12 +56,17 @@ class ProfileSerializer(serializers.ModelSerializer):
         return UserSerializer(following_users, many=True).data
 
     def get_follow_requests(self, obj):
-        follow_requests = Followlist.objects.filter(following=obj.user, reqstatus='pending')
+        user = self.context['request'].user
+        follow_requests = Followlist.objects.filter(following=obj.user, follower=user)
         return FollowListSerializer(follow_requests, many=True).data
+
+    def get_accept_requests(self, obj):
+        user = self.context['request'].user
+        accept_requests = Followlist.objects.filter(following=user, follower=obj.user)
+        return FollowListSerializer(accept_requests, many=True).data
 
 
 class FollowListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Followlist
         fields = ['id', 'follower', 'following', 'reqstatus']
-

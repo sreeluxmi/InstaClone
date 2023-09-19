@@ -49,7 +49,6 @@ ul{
     display: flex;
     align-items: center;
     margin-left:3rem ;
-    display: none;
 }
 #cancel-request-button,
 #accept-request-button{
