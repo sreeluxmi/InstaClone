@@ -4,6 +4,7 @@ from .views import (signup, home, landingPage,
                     profile_view_page, profile_update,
                     profile_list, single_profile,
                     followers_list_view,
+                    following_list_view,
                     UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
                     AcceptFollowRequest, Unfollow)
@@ -23,6 +24,7 @@ urlpatterns = [
     path('profile-list/', profile_list, name="profile-list"),
     path('single-profile/<int:pk>/', single_profile, name="single-profile-view"),
     path('followers-list/', followers_list_view, name="followers-list"),
+    path('following-list', following_list_view, name="following-list"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),

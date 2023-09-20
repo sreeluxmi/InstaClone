@@ -17,11 +17,11 @@ $(document).ready(function(){
             } else if (response.status === 401) {
                 console.log("User is not authenticated.");
             } else {
-                alert("An error occurred");
+                console.log("An error occurred");
             }
         })
         .then(function (data) {
-            // console.log(data);
+
             userList.innerHTML = '';
 
             if (data && data.length > 0) { 

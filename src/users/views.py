@@ -237,3 +237,7 @@ def single_profile(request, pk):
 
 def followers_list_view(request):
     return render(request, 'user/followerList.html')
+
+
+def following_list_view(request):
+    return render(request, "user/followingList.html")
