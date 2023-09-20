@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--Bootstrap-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" 
+        crossorigin="anonymous">
+        <!--JQuery and JS -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>        
+        <script src="{% static 'user/js/followingList.js' %}"></script>
+    </head>
+
+    <style>
+        .form-outer-container{
+            margin: 5rem;
+        }
+        .search{
+            width :20rem;
+            float :left ;
+        }
+        .search-button{
+            border:1px solid #386bc0;
+            color:#386bc0;
+        }
+        .search-button:hover{
+            background:#386bc0;
+            color : white;
+            border :1px solid #386bc0;
+        }    
+    </style>
+    <body>
+        <div class="container">
+            <form class="form-inline form-outer-container">
+                <input class="form-control mr-sm-2 search" placeholder="search the people you follow" type="search" name="search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+            </form>
+            <ul id="followingList"></ul>
+        </div>
+   
+    </body>
+</html>
