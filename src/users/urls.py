@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (signup, home, landingPage,
                     profile_view_page, profile_update,
                     profile_list, single_profile,
+                    followers_list_view,
                     UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
                     AcceptFollowRequest, Unfollow)
@@ -21,6 +22,7 @@ urlpatterns = [
     path('profile-update/', profile_update, name="profile-update"),
     path('profile-list/', profile_list, name="profile-list"),
     path('single-profile/<int:pk>/', single_profile, name="single-profile-view"),
+    path('followers-list/', followers_list_view, name="followers-list"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),

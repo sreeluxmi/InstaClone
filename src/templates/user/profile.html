@@ -31,10 +31,10 @@
                 <button class='profile-edit-button' id="myButton">Edit profile</button>   
 
                 <div class="row">
-                    <div class='col-1'>
-                        <p ><span id="profile-stats" class="profile-followers-count"></span> Followers</p>
+                    <div class=''>
+                        <a href="{% url 'followers-list' %}"><span id="profile-stats" class="profile-followers-count"></span> Followers</a>
                     </div>
-                    <div class='col-1'>
+                    <div class=''>
                         <p><span id="profile-stats" class="profile-following-count"></span> Following</p>
                     </div>
                 </div>

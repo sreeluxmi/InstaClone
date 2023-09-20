@@ -4,6 +4,7 @@ $(document).ready(function(){
     const user_id = $('#user_id').html()
 
 
+    //single profile view
     if (access_token){
         fetch(`/users/api/profile/${user_id}/`,{
             method: "GET",
@@ -32,13 +33,15 @@ $(document).ready(function(){
 
             const isPublic = data.public;
 
+
+            // accept request container view
             if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'pending'){
                 $("#follow-request-message").text(`You have a follow request from ${data.username}`);
             }else{
                 $("#follow-request-container").hide();
             }
 
-
+            // accept request accept or cancel action
             $('#cancel-request-button, #accept-request-button').click(function(){
                 const buttonValue = $(this).text();
                 console.log(buttonValue)
@@ -66,47 +69,83 @@ $(document).ready(function(){
                     }
                 })
             })
-    
+            
 
-
+            //sending follow request, unfollowing and request canceling
             $("#follow-button").click(function(){
 
-                const userToFollow = {
-                    following_id: user_id
-                };
-                fetch("/users/follow_request/", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + access_token,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userToFollow)
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        if (isPublic) {
-                            $("#follow-button").text("Following");
+                if ($(this).text()==="Follow"){
+                    const userToFollow = {
+                        following_id: user_id
+                    };
+                    fetch("/users/follow_request/", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + access_token,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(userToFollow)
+                    })
+                    .then(function (response){
+                        if (response.ok) {
+                            if (isPublic) {
+                                $("#follow-button").text("Following");
+                            } else {
+                                $("#follow-button").text("Requested");
+                            }
                         } else {
-                            $("#follow-button").text("Requested");
+                            console.log("Already following error")
                         }
-                    } else {
-                        if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'accepted'){
-                            $("#follow-button").click(function(){
-                                
-                            })
+                    })
+                }else if($(this).text()==="Following" ) {
+                    fetch(`/users/unfollow/${user_id}`, {
+                        method : "DELETE",
+                        headers : {
+                            "Authorization": "Bearer " + access_token,
+                            "Content-Type" : "application/json"
                         }
-     
-                    }
-                })
+                    })
+                    .then(function(response){
+                        if(response.ok){
+                            $('#follow-button').text("Follow");
+                            console.log("Unfollowed :(")
+                        }else{
+                            console.log("canceling failed")
+                        }
+                    })
+                }else if($(this).text()==="Requested" ){
+                    const reqToCancel = {
+                        following_id: user_id,
+                        "action" : "cancel"
+                    };
+                    fetch("/users/follow_request/", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + access_token,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(reqToCancel)
+                    })
+                    .then(function (response){
+                        if (response.ok) {
+                            $("#follow-button").text("Follow");
+                        } else {
+                            console.log("Already Request cancelling error")
+                        }
+                    })
+                }
+
+
             })
+
+
 
             if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'accepted'){
                 $("#follow-button").text("Following")
             }else if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'pending'){
                 $("#follow-button").text("Requested")  // create cancel button 
             }
-            
-            
+
 
         })
 

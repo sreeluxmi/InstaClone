@@ -5,6 +5,11 @@ body {
 .profile{
     margin-top: 3rem;
 }
+a{
+    color : black;
+    cursor: pointer;
+    text-decoration: none;
+}
 
 #profile-image img{
     border-radius: 50%;

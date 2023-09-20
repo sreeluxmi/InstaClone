@@ -233,3 +233,7 @@ def profile_list(request):
 
 def single_profile(request, pk):
     return render(request, 'user/singleProfile.html', {'id': pk})
+
+
+def followers_list_view(request):
+    return render(request, 'user/followerList.html')
