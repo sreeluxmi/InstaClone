@@ -231,6 +231,10 @@ def profile_list(request):
     return render(request, "user/userlist.html")
 
 
+def pending_requests(request):
+    return render(request, "user/pendingReq.html")
+
+
 def single_profile(request, pk):
     return render(request, 'user/singleProfile.html', {'id': pk})
 

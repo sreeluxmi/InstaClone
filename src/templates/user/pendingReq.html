@@ -1,0 +1,49 @@
+{% load static%}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--js-->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'user/js/pendingReq.js' %}"></script>
+    </head>
+    <style>
+        #follow-request-container{
+            height :auto;
+            max-width: fit-content;
+            margin-top:1rem;
+            margin-bottom : 2rem;
+            display: flex;
+            align-items: center;
+            margin-left:3rem ;
+        }
+        #cancel-request-button,
+        #accept-request-button{
+            color: black;
+            background-color: #ffffff;
+            border: 1px solid black;
+            border-radius: 3px;
+            width:4rem;
+            height: 30px;
+            margin-left: 1.5rem;
+        }
+        #follow-request-message{
+            width :auto;
+            height: 1rem;
+        }
+
+    </style>
+    <body>
+        <h3>Pending requests</h3>
+        <div id="follow-request-container" >
+            <p id="follow-request-message"></p>
+            <button id="cancel-request-button">Cancel</button>
+            <button id="accept-request-button">Accept</button>
+        </div>
+    </body>
+</html>

@@ -57,11 +57,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_follow_requests(self, obj):
         user = self.context['request'].user
+        print(user)
         follow_requests = Followlist.objects.filter(following=obj.user, follower=user)
         return FollowListSerializer(follow_requests, many=True).data
 
     def get_accept_requests(self, obj):
         user = self.context['request'].user
+        print(user)
         accept_requests = Followlist.objects.filter(following=user, follower=obj.user)
         return FollowListSerializer(accept_requests, many=True).data
 
