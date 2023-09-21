@@ -25,7 +25,7 @@ urlpatterns = [
     path('profile-list/', profile_list, name="profile-list"),
     path('single-profile/<int:pk>/', single_profile, name="single-profile-view"),
     path('followers-list/', followers_list_view, name="followers-list"),
-    path('following-list', following_list_view, name="following-list"),
+    path('following-list/', following_list_view, name="following-list"),
     path('pending-requests/', pending_requests, name="pending-requests"),
 
     # API

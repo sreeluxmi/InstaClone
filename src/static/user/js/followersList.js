@@ -40,8 +40,56 @@ $(document).ready(function(){
                     followersList.appendChild(profileContainer)
                 }
             }
-           
         })
+        
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const searchQuery = searchInput.value.trim();
+            console.log(searchInput)
 
+            fetch(`/users/api/profile/?search=${searchQuery}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + access_token
+                }
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    console.log("User is not authenticated.");
+                } else {
+                    alert("An error occurred");
+                }
+            })
+            .then(function (data) {
+                console.log(data);
+
+                followersList.innerHTML = ''; 
+
+                if (data && data.length > 0) {
+                    for (let i = 0; i < data.length; i++) {
+                    const item = data[i]
+
+                    const profileContainer = document.createElement("div");
+                    profileContainer.style.height = "60px";
+                    profileContainer.className = "user-profile";
+
+                    const nameLink = document.createElement('a');
+                    nameLink.style.textDecoration = "none"
+                    nameLink.style.color = "black"
+                    nameLink.textContent = `${item.username}`;
+                    nameLink.href = `/users/single-profile/${item.user}`; 
+                    profileContainer.appendChild(nameLink);
+
+
+                    followersList.appendChild(profileContainer);
+                    }
+                }
+            });
+        });        
+
+    }else{
+        window.location.href = '/users/home/';
     }
 })

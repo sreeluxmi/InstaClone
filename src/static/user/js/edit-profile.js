@@ -50,5 +50,7 @@ $(document).ready(function () {
             });
 
         });             
+    }else{
+        window.location.href = '/users/home/';
     }
 });

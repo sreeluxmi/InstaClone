@@ -14,7 +14,7 @@ $(document).ready(function () {
             } else if (response.status === 401) {
                 console.log("User is not authenticated.");
             } else {
-                alert("An error occurred");
+                window.location.href = '/users/home/';
             }
         })
         .then(function (data) {
@@ -28,5 +28,7 @@ $(document).ready(function () {
             const container = document.getElementById("profile-image");
             container.appendChild(img); 
         })             
+    }else{
+        window.location.href = '/users/home/';
     }
 });
