@@ -68,7 +68,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_pending_requests(self, obj):
         user = self.context['request'].user
-        print(user)
         pending_requests = Followlist.objects.filter(following=user, reqstatus="pending")
         return FollowListSerializer(pending_requests, many=True).data
 

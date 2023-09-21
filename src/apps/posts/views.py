@@ -12,3 +12,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+def image_posting(request):
+    return render(request, 'post/postImage.html')
