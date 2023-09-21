@@ -1,6 +1,5 @@
 # DJANGO
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, viewsets, filters
 from rest_framework.views import APIView
