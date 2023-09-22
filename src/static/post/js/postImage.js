@@ -1,55 +1,38 @@
-$(document).ready(function(){
-    $("#imagePostingForm").submit(function(event){
-        event.preventDefault();
+document.getElementById("imagePostingForm").addEventListener("submit", function (event) {
+    event.preventDefault()
 
+    var access_token = localStorage.getItem('access_token')
 
-        var access_token = localStorage.getItem('access_token');
+    if (access_token){
+        const imageInput = document.getElementById("images");
+        console.log(imageInput)
+        const captionInput = document.getElementById("caption");
 
-        if(access_token){
-            const inpfile = document.getElementById('images')
-            
-            const formData = new FormData();
+        const formData = new FormData();
+        const images = imageInput.files;
 
-            console.log(inpfile.files)
+        for (let i = 0; i < images.length; i++) {
+            formData.append("uploaded_images", images[i]);
+        }
 
-            for (const file of inpfile.files){
-                formData.append('images', file);
+        formData.append("caption", captionInput.value);
+
+        fetch("/users/api/posts/", {
+            method: "POST",
+            headers: {
+                "Authorization" : "Bearer " + access_token
+            },
+            body: formData,
+        })
+        .then(function (response){
+            if (response.ok){
+                console.log("success")
+            }else{
+                console.log("Error")
             }
-            formData.append('caption', $("#caption").val());
-            
-            // const formData ={
-            //     caption : $("#caption").val(),
-            //     uploaded_images : file
-            // }
-
-            // console.log(formData.caption)
-            // console.log(formData.uploaded_images)
-            // console.log(formData)
-
-
-            // formData.append('caption', $("#caption").val());
-            // formData.append('uploaded_images', file);
-
-
-            fetch('/users/api/posts/',{
-                method: "POST",
-                headers:{
-                    "Authorization": "Bearer " + access_token,
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: formData,
-            }).then(function(response){
-                if(response.ok){
-                    console.log("Upload successfull")
-                }else{
-                    console.log(response)
-                    console.log("Something went wrong")
-                }
-            })
-        }else{
-            window.location.href = '/users/home/';        
-        }        
-    })
-
-
-})
+        })
+    }else{
+        window.location.href = '/users/home/';
+    }
+});
+         
