@@ -18,16 +18,19 @@ $(document).ready(function () {
             }
         })
         .then(function (data) {
+            console.log(data)
             $("#bio").val(data.bio);
+
         })
 
         $("#update-profile-form").submit(function (event) {
             event.preventDefault();
             
             const newData = {
-                bio : document.getElementById('bio').value,
+                bio : document.getElementById('bio').value
             };
-            
+            console.log(bio)
+
             fetch("/users/api/profile/me/", {
                 method: "PATCH",
                 headers: {
@@ -36,7 +39,6 @@ $(document).ready(function () {
                 },
                 body: JSON.stringify(newData)
             })
-            
             
             .then(response =>{
                 console.log(response)

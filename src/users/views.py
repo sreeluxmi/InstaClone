@@ -8,12 +8,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 # LOCAL
-from .models import (Profile, Followlist)
+from .models import (Profile, Followlist, Post)
 from .serializers import (UserSerializer,
                           UserLoginSerializer,
-                          ProfileSerializer,)
+                          ProfileSerializer,
+                          PostSerializer)
 from core.request_responses import *
 User = get_user_model()
 
@@ -205,6 +208,20 @@ class Unfollow(APIView):
             return Response({"detail": "You have unfollowed ."})
 
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND) 
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+def image_posting(request):
+    return render(request, 'post/postImage.html')
+
 
 
 def signup(request):

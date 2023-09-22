@@ -5,14 +5,16 @@ from .views import (signup, home, landingPage,
                     profile_list, single_profile,
                     followers_list_view,
                     following_list_view,
-                    pending_requests,
+                    pending_requests, image_posting,
                     UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
-                    AcceptFollowRequest, Unfollow)
+                    AcceptFollowRequest, Unfollow,
+                    PostViewSet)
 
 
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
+router.register(r'posts', PostViewSet)
 
 
 urlpatterns = [
@@ -27,6 +29,7 @@ urlpatterns = [
     path('followers-list/', followers_list_view, name="followers-list"),
     path('following-list/', following_list_view, name="following-list"),
     path('pending-requests/', pending_requests, name="pending-requests"),
+    path('image-posting/', image_posting, name="image-posting"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -6,16 +7,24 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" 
+        crossorigin="anonymous">
+        <!--JQuery and JS -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
         <script src="{% static 'post/js/postImage.js' %}"></script>
-
     </head>
     <body>
-        <form method="POST">
-            <input type="file" multiple>
-            <input type="submit" value="Post">
-        </form>
-
+        <div class="container">
+            
+            <form method="POST" id="imagePostingForm">
+                {% csrf_token %}
+                <input type="file" id="images" multiple><br>
+                <textarea id="caption" name="caption"placeholder="Give captions" rows="4" cols="50"></textarea><br>
+                <input type="submit" value="Post">
+            </form>
+        </div>
 
     </body>
 </html>

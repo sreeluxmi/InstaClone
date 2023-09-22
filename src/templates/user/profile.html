@@ -19,8 +19,42 @@
         <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
         <!--js-->
         <script src="{% static 'user/js/profile.js' %}"></script>
+        <style>
+            li, a{
+                font-size: 1.1rem;
+                text-decoration: none;
+                color : black ;
+            }
+            header{
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+            .nav__links{
+                list-style: none;
+            }
+            .nav__links li{
+                display: inline-block;
+            }
+            .nav__links li a{
+                padding: 0 20px;
+            }
+            .nav__links li a:hover{
+                color: #386bc0;
+            }
+        </style>
     </head>
     <body>
+        <header>
+            <nav>
+                <ul class="nav__links">
+                    <li>
+                        <a href="{% url 'image-posting' %}">Post Image</a>
+                        <a>Logout</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
         <div class='container'>
             <div class="profile">
                 <div id="profile-image">
