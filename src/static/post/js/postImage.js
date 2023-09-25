@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (access_token){
             const imageInput = document.getElementById("images");
-            console.log(imageInput)
             const captionInput = document.getElementById("caption");
     
             const formData = new FormData();
@@ -19,8 +18,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 formData.append("uploaded_images", imageInput.files[0]);
             }
             
-    
             formData.append("caption", captionInput.value);
+
     
             fetch("/users/api/posts/", {
                 method: "POST",
@@ -32,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(function (response){
                 if (response.ok){
                     console.log("success")
+                    window.location.href = '/users/me/'
                 }else{
                     console.log("Error")
                 }

@@ -138,18 +138,15 @@ $(document).ready(function(){
 
             })
 
-
             if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'accepted'){
                 $("#follow-button").text("Following")
             }else if(data.follow_requests.length>0 && data.follow_requests[0].reqstatus === 'pending'){
-                $("#follow-button").text("Requested")  // create cancel button 
+                $("#follow-button").text("Requested")
             }
 
         })
-
 
     }else{
         window.location.href = '/users/home/';
     }
 });
-

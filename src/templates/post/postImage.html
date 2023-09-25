@@ -18,7 +18,7 @@
     <body>
         <div class="container">
             
-            <form method="POST" id="imagePostingForm">
+            <form method="POST" id="imagePostingForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" id="images" multiple><br>
                 <textarea id="caption" name="caption"placeholder="Give captions" rows="4" cols="50"></textarea><br>

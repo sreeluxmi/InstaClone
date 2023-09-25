@@ -18,6 +18,7 @@ $(document).ready(function () {
             }
         })
         .then(function (data) {
+            console.log(data)
             $(".profile-name").text(data.username); 
             $(".profile-followers-count").text(data.followers.length); 
             $(".profile-following-count").text(data.following.length);  
@@ -26,7 +27,53 @@ $(document).ready(function () {
             const img = document.createElement("img");
             img.src = data.profile_pic;
             const container = document.getElementById("profile-image");
-            container.appendChild(img); 
+            container.appendChild(img);
+
+            postsList.innerHTML = ''
+
+            if( data.posts.length > 0){
+                for(let i=0; i<data.posts.length;i++){
+                    const item=data.posts[i]
+                    console.log(item)
+
+                    const postContainer = document.createElement("div")
+                    postContainer.className = 'post-container'
+
+                    const delButton = document.createElement('button')
+                    delButton.textContent = "Delete post"
+                    $(delButton). attr('id', 'delButton');
+                    console.log(item.images[0].post)
+                    $('#delButton').click(function(){
+                        fetch(`/users/api/posts/${item.images[0].post}`,{
+                            method: "DELETE",
+                            headers: {
+                                "Authorization" : "Bearer " + access_token,
+                            },                           
+                        })
+                        .then(function(response){
+                            if (response.ok) {
+                                console.log("post deleted")
+                            } else {
+                                console.log("bad request")
+                            }
+                        })
+                    })
+                    postContainer.appendChild(delButton)
+
+                    const img = document.createElement("img")
+                    img.src = `${item.images[0].image}`
+                    postContainer.appendChild(img)
+
+                    const caption = document.createElement('p')
+                    caption.textContent = `${item.caption}`
+                    postContainer.appendChild(caption)
+
+
+                    postsList.appendChild(postContainer)
+                }
+            }
+
+
         })             
     }else{
         window.location.href = '/users/home/';

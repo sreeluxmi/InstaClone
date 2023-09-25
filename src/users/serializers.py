@@ -29,6 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     follow_requests = serializers.SerializerMethodField()
     accept_requests = serializers.SerializerMethodField()
     pending_requests = serializers.SerializerMethodField()
+    posts = serializers.SerializerMethodField()
     username = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
@@ -36,7 +37,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ["user", "username", "bio", "profile_pic", "public",
                   "followers", "following",
                   "follow_requests", "accept_requests",
-                  "pending_requests"]
+                  "pending_requests", "posts"]
 
     def get_followers(self, obj):
         return self.get_followers_list(obj.user)
@@ -70,6 +71,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         pending_requests = Followlist.objects.filter(following=user, reqstatus="pending")
         return FollowListSerializer(pending_requests, many=True).data
+
+    def get_posts(self, obj):
+        user = self.context['request'].user
+        user_posts = Post.objects.filter(user=user)
+        return PostSerializer(user_posts, many=True).data
 
 
 class FollowListSerializer(serializers.ModelSerializer):
