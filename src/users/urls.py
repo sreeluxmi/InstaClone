@@ -9,7 +9,7 @@ from .views import (signup, home, landingPage,
                     UserRegistrationView, UserLoginView,
                     ProfileViewSet, FollowRequestView,
                     AcceptFollowRequest, Unfollow,
-                    PostViewSet)
+                    PostViewSet, FeedAPIView)
 
 
 router = DefaultRouter()
@@ -37,4 +37,5 @@ urlpatterns = [
     path('follow_request/', FollowRequestView.as_view()),
     path('accept_request/', AcceptFollowRequest.as_view()),
     path('unfollow/<int:id>/', Unfollow.as_view(), name='unfollow-user'),
+    path('feedAPI/', FeedAPIView.as_view(),)
 ]

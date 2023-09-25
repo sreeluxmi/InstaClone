@@ -210,6 +210,18 @@ class Unfollow(APIView):
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND) 
 
 
+class FeedAPIView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        following_users = Followlist.objects.get(follower=user, reqstatus='accepted')
+        print(following_users)
+        following_users = Followlist.objects.filter(follower=user, reqstatus='accepted').values('following_id')
+        return Post.objects.filter(user__id__in=following_users)
+
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

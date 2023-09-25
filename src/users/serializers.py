@@ -73,8 +73,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         return FollowListSerializer(pending_requests, many=True).data
 
     def get_posts(self, obj):
+        other_user = obj.user
+        print(other_user)
         user = self.context['request'].user
-        user_posts = Post.objects.filter(user=user)
+        print(user)
+        if other_user == user:
+            user_posts = Post.objects.filter(user=user)
+        else :
+            user_posts = Post.objects.filter(user=other_user)
         return PostSerializer(user_posts, many=True).data
 
 

@@ -33,6 +33,39 @@ $(document).ready(function(){
 
             const isPublic = data.public;
 
+            if( data.posts.length > 0){
+                for(let i=0; i<data.posts.length;i++){
+                    const item=data.posts[i]
+
+                    const postContainer = document.createElement("div")
+                    postContainer.className = 'post-container'
+                    console.log(item)
+
+
+                    const imageList = document.createElement("ul");
+
+                    for (let j = 0; j < item.images.length; j++) {
+                        const imageItem = item.images[j];
+        
+                        const imageListItem = document.createElement("li");
+                        const image = document.createElement("img");
+                        image.src = imageItem.image;
+                        imageListItem.appendChild(image);
+        
+                        imageList.appendChild(imageListItem);
+                    }
+        
+                    postContainer.appendChild(imageList);
+
+                    const caption = document.createElement('p')
+                    caption.textContent = `${item.caption}`
+                    postContainer.appendChild(caption)
+
+
+                    postsList.appendChild(postContainer)
+                }
+            }
+
 
             // accept request container view
             if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'pending'){
