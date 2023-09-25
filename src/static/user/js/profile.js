@@ -26,6 +26,7 @@ $(document).ready(function () {
 
             const img = document.createElement("img");
             img.src = data.profile_pic;
+
             const container = document.getElementById("profile-image");
             container.appendChild(img);
 
@@ -34,16 +35,18 @@ $(document).ready(function () {
             if( data.posts.length > 0){
                 for(let i=0; i<data.posts.length;i++){
                     const item=data.posts[i]
-                    console.log(item)
 
                     const postContainer = document.createElement("div")
                     postContainer.className = 'post-container'
+                    console.log(item)
 
                     const delButton = document.createElement('button')
                     delButton.textContent = "Delete post"
-                    $(delButton). attr('id', 'delButton');
-                    console.log(item.images[0].post)
-                    $('#delButton').click(function(){
+                    delButton.className = 'delButton';
+
+
+
+                    delButton.addEventListener('click', function(){
                         fetch(`/users/api/posts/${item.images[0].post}`,{
                             method: "DELETE",
                             headers: {
@@ -60,9 +63,20 @@ $(document).ready(function () {
                     })
                     postContainer.appendChild(delButton)
 
-                    const img = document.createElement("img")
-                    img.src = `${item.images[0].image}`
-                    postContainer.appendChild(img)
+                    const imageList = document.createElement("ul");
+
+                    for (let j = 0; j < item.images.length; j++) {
+                        const imageItem = item.images[j];
+        
+                        const imageListItem = document.createElement("li");
+                        const image = document.createElement("img");
+                        image.src = imageItem.image;
+                        imageListItem.appendChild(image);
+        
+                        imageList.appendChild(imageListItem);
+                    }
+        
+                    postContainer.appendChild(imageList);
 
                     const caption = document.createElement('p')
                     caption.textContent = `${item.caption}`

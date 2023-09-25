@@ -73,8 +73,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         return FollowListSerializer(pending_requests, many=True).data
 
     def get_posts(self, obj):
-        print(obj.user)
-        user_posts = Post.objects.filter(user=obj.user)
+        user = self.context['request'].user
+        user_posts = Post.objects.filter(user=user)
         return PostSerializer(user_posts, many=True).data
 
 
@@ -99,7 +99,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['user', 'caption', 'images', "uploaded_images"]
+        fields = ['caption', 'images', "uploaded_images"]
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop('uploaded_images')
