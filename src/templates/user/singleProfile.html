@@ -19,6 +19,12 @@
         <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
         <!--js-->
         <script src="{% static 'user/js/singleProfile.js' %}"></script>
+        <style>
+        hr.hr-line{
+            width: 70%;
+            margin: auto;
+        }
+        </style>
 
     </head>
     <body>
@@ -53,7 +59,14 @@
                 <button id="follow-button">Follow</button>
             </div>
         </div>
+        <br>
+        <hr class="hr-line">
+        <br>
+        <div class="container overall-container">
+            <ul id="postsList">
 
+            </ul>
+        </div>
 
 
     </body>
