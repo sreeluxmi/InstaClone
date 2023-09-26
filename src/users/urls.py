@@ -1,15 +1,26 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (signup, home, landingPage,
-                    profile_view_page, profile_update,
-                    profile_list, single_profile,
+
+from .apis import (UserRegistrationView,
+                   UserLoginView,
+                   ProfileViewSet,
+                   FollowRequestView,
+                   AcceptFollowRequest,
+                   Unfollow,
+                   PostViewSet,
+                   FeedAPIView)
+
+from .views import (signup, home,
+                    landingPage,
+                    profile_view_page,
+                    profile_update,
+                    profile_list,
+                    single_profile,
                     followers_list_view,
                     following_list_view,
-                    pending_requests, image_posting,
-                    UserRegistrationView, UserLoginView,
-                    ProfileViewSet, FollowRequestView,
-                    AcceptFollowRequest, Unfollow,
-                    PostViewSet, FeedAPIView)
+                    pending_requests,
+                    image_posting,
+                    )
 
 
 router = DefaultRouter()

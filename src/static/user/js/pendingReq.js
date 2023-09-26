@@ -42,7 +42,7 @@ $(document).ready(function(){
                         }
                     }).then(data =>{
                         console.log(data.username)
-                        $("#follow-request-message").text(`You have a follow request from ${data.username}`);
+                        $("#follow-request-message").text(`You have a pending follow request from ${data.username}`);
                         $('#cancel-request-button, #accept-request-button').click(function(){
                         const buttonValue = $(this).text();
                         console.log(buttonValue)

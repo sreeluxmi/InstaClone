@@ -69,7 +69,7 @@ $(document).ready(function(){
 
             // accept request container view
             if(data.accept_requests.length>0 && data.accept_requests[0].reqstatus === 'pending'){
-                $("#follow-request-message").text(`You have a follow request from ${data.username}`);
+                $("#follow-request-message").text(`You have a pending follow request from ${data.username}`);
             }else{
                 $("#follow-request-container").hide();
             }
