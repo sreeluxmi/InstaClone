@@ -79,7 +79,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         print(user)
         if other_user == user:
             user_posts = Post.objects.filter(user=user)
-        else :
+        else:
             user_posts = Post.objects.filter(user=other_user)
         return PostSerializer(user_posts, many=True).data
 

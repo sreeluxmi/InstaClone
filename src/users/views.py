@@ -212,13 +212,14 @@ class Unfollow(APIView):
 
 class FeedAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        following_users = Followlist.objects.get(follower=user, reqstatus='accepted')
-        print(following_users)
+        print(user)
+        # following_users = Followlist.objects.get(follower=user, reqstatus='accepted')
+        # print(following_users)
         following_users = Followlist.objects.filter(follower=user, reqstatus='accepted').values('following_id')
+        print(following_users)
         return Post.objects.filter(user__id__in=following_users)
 
 
@@ -233,7 +234,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
 def image_posting(request):
     return render(request, 'post/postImage.html')
-
 
 
 def signup(request):
