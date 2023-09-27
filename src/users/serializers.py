@@ -78,15 +78,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_posts(self, obj):
         other_user = obj.user
-        print(other_user)
         user = self.context['request'].user
-        print(user)
         if other_user == user:
             user_posts = Post.objects.filter(user=user)
-            print(user_posts)
         else:
             user_posts = Post.objects.filter(user=other_user)
-            print("2", user_posts)
         return PostSerializer(user_posts, many=True).data
 
 

@@ -12,14 +12,20 @@ $(document).ready(function () {
             if (response.ok) {
                 return response.json();
             } else if (response.status === 401) {
+                window.location.href = '/users/home/';
                 console.log("User is not authenticated.");
             } else {
-                alert("An error occurred");
+                window.location.href = '/users/home/';
             }
         })
         .then(function (data) {
             console.log(data)
             $("#bio").val(data.bio);
+
+            const img = document.createElement("img")
+            img.src = `${data.profile_pic}`
+            const container = document.getElementById("profile-image");
+            container.appendChild(img);
 
         })
 
@@ -41,10 +47,8 @@ $(document).ready(function () {
             })
             
             .then(response =>{
-                console.log(response)
                 if(response.ok){
-                    window.location.href = "/users/api/profile/me/"
-                    console.log("Profile updated")
+                    window.location.href = "/users/me/"
                     return response.json()
                 }else{
                     alert("Some error occured")

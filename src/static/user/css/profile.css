@@ -76,18 +76,20 @@ hr.hr-line{
 
 
 .post-container{
-    height:300px;
-    width: 350px;
-    margin-bottom: 4rem;
-}
-
-.overall-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height:200px;
+    width: 200px;
+    margin-bottom: 2rem;
 }
 
 .post-container img{
     width: 100%;
     height: 100%;
+}
+
+.delButton{
+    background: none;
+    border: 1px solid #dbdbdb;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500; 
 }

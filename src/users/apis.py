@@ -100,13 +100,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=['GET', 'PATCH'])
-    def me(self, request, *args, **kwargs):
+    def me(self, request):
         self.get_object = lambda: request.user.profile
-        print(request.user)
         if request.method == "GET":
-            return self.retrieve(request, *args, **kwargs)
+            return self.retrieve(request)
         elif request.method == 'PATCH':
-            return self.partial_update(request, *args, **kwargs)
+            return self.partial_update(request)
 
     # @action(detail=False, methods=['GET', 'PATCH'])
     # def me(self, request, *args, **kwargs):

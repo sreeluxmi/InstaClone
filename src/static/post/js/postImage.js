@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("imagePostingForm").addEventListener("submit", function (event) {
         event.preventDefault()
         var access_token = localStorage.getItem('access_token')
+        console.log(access_token)
 
         if (access_token){
             const imageInput = document.getElementById("images");
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("caption", captionInput.value);
 
     
-            fetch("/users/api/posts/", {
+            fetch("/apps.post/api/posts/", {
                 method: "POST",
                 headers: {
                     "Authorization" : "Bearer " + access_token

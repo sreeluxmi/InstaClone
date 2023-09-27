@@ -10,9 +10,11 @@ $(document).ready(function () {
         })
         .then(function (response) {
             if (response.ok) {
+                console.log("User is authenticated");
                 return response.json();
             } else if (response.status === 401) {
                 console.log("User is not authenticated.");
+                window.location.href = '/users/home/';
             } else {
                 window.location.href = '/users/home/';
             }
@@ -47,7 +49,7 @@ $(document).ready(function () {
 
 
                     delButton.addEventListener('click', function(){
-                        fetch(`/users/api/posts/${item.images[0].post}`,{
+                        fetch(`/apps.post/api/posts/${item.images[0].post}`,{
                             method: "DELETE",
                             headers: {
                                 "Authorization" : "Bearer " + access_token,
@@ -86,7 +88,6 @@ $(document).ready(function () {
                     postsList.appendChild(postContainer)
                 }
             }
-
 
         })             
     }else{

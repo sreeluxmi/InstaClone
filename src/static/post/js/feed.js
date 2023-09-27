@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var access_token = localStorage.getItem('access_token')
 
     if(access_token){
-        fetch('/users/feedAPI',{
+        fetch('/apps.post/ feedAPI',{
             method: 'GET',
             headers: {
                 "Authorization": "Bearer " + access_token,
