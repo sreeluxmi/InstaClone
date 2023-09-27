@@ -1,8 +1,6 @@
 # DJANGO
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
 from django.contrib.auth import get_user_model
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, viewsets, filters
 from rest_framework.views import APIView
@@ -10,12 +8,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
+
 # LOCAL
-from .models import (Profile, Followlist, Post)
+from .models import (Profile, Followlist)
 from .serializers import (UserSerializer,
                           UserLoginSerializer,
-                          ProfileSerializer,
-                          PostSerializer)
+                          ProfileSerializer)
 
 from core.request_responses import (FOLLOWING_EXISTS,
                                     REQUEST_CANCELED,
@@ -211,25 +209,3 @@ class Unfollow(APIView):
             return Response({"detail": "You have unfollowed ."})
 
         return Response({"detail": "You were not following them"}, status=status.HTTP_404_NOT_FOUND) 
-
-
-class FeedAPIView(generics.ListAPIView):
-    serializer_class = PostSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        print(user)
-        # following_users = Followlist.objects.get(follower=user, reqstatus='accepted')
-        # print(following_users)
-        following_users = Followlist.objects.filter(follower=user, reqstatus='accepted').values('following_id')
-        print(following_users)
-        return Post.objects.filter(user__id__in=following_users)
-
-
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)

@@ -2,10 +2,6 @@
 from django.shortcuts import render
 
 
-def image_posting(request):
-    return render(request, 'post/postImage.html')
-
-
 def signup(request):
     return render(request, 'user/signup.html')
 

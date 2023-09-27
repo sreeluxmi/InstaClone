@@ -1,81 +1,13 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-        <script src="{% static 'post/js/feed.js' %}"></script>
-        <style>
-            li, a{
-                font-size: 1.1rem;
-                text-decoration: none;
-                color : black ;
-            }
-            header{
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                margin-top : 2rem;
-                margin-bottom : 2rem;
-            }
-            .nav__links{
-                list-style: none;
-            }
-            .nav__links li{
-                display: inline-block;
-            }
-            .nav__links li a{
-                padding: 0 20px;
-            }
-            .nav__links li a:hover{
-                color: #386bc0;
-            }
-            ul{
-                list-style : none;
-            }
+{% block contents %}
 
-            .post-container{
-                border :1px solid gray;
-                margin:3rem;
-                width : 500px;
-            }
+<!--js-->
+<script src="{% static 'post/js/feed.js' %}"></script>
 
-            .image-contained{
-                width:200px;
-                height : 200px;
-            }
+<hr style="width:60%;margin:auto;">
+<h3>Feed</h3>
+<div id="feed">
 
-            .image-contained img{
-                width: 100%;
-                height: 100%;
-            }
-
-        </style>
-    </head>
-    <body>
-        <header>
-            <nav>
-                <ul class="nav__links">
-                    <li>
-                        <a href="{% url 'profile-list' %}">View other users</a>
-                        {% comment %} <a href="{% url 'pending-requests' %}">Pending requests</a> {% endcomment %}
-                        <a href="{% url 'profile' %}">Profile</a>
-                    </li>
-                </ul>
-            </nav>
-        </header>
-        <hr style="width:60%;margin:auto;">
-        <h1>Feed</h1>
-        <div id="feed">
-
-        </div>
-
-        
-
-    </body>
-</html>
-
+</div>
+{% endblock %}

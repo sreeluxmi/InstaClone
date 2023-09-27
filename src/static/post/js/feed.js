@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         feedContainer.appendChild(postContainer)
 
                     }
+                }else{
+                    console.log("No posts found")
                 }
 
 

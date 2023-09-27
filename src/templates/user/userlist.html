@@ -1,78 +1,58 @@
-{% load static%}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" 
-        rel="stylesheet" 
-        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" 
-        crossorigin="anonymous">
+{% extends 'base.html' %}
+{% load static %}
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="{% static 'user/js/userlist.js' %}"></script>
+{% block contents %}
+<!--css-->
+<script src="{% static 'user/js/userlist.js' %}"></script>
+<style>
+    .form-outer-container{
+        margin: 5rem;
+    }
+    .search{
+        width :20rem;
+        float :left ;
+    }
+    li{
+        list-style-type : none;
+    }
+    img{
+        border-radius: 50%;
+        width: 3rem;
+        height :3rem;
+        float: left;
+        margin-right: 3rem;
+    }
+    h3{
+        margin-bottom :2rem;
+    }
+    .user-profile{
+        margin :1rem;
+    }
+    .search-button{
+        border:1px solid #386bc0;
+        color:#386bc0;
+    }
+    .search-button:hover{
+        background:#386bc0;
+        color : white;
+        border :1px solid #386bc0;
+    }
 
+</style>
 
-        <link rel="stylesheet" href="">
-        <style>
-            .form-outer-container{
-                margin: 5rem;
-            }
-            .search{
-                width :20rem;
-                float :left ;
-            }
-            li{
-                list-style-type : none;
-            }
-            img{
-                border-radius: 50%;
-                width: 3rem;
-                height :3rem;
-                float: left;
-                margin-right: 3rem;
-            }
-            h3{
-                margin-bottom :2rem;
-            }
-            .user-profile{
-                margin :1rem;
-            }
-            .search-button{
-                border:1px solid #386bc0;
-                color:#386bc0;
-            }
-            .search-button:hover{
-                background:#386bc0;
-                color : white;
-                border :1px solid #386bc0;
-            }
+<div class="container">
+    <form class="form-inline form-outer-container">
+        <input class="form-control mr-sm-2 search" type="search" name="search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+    </form>
+    <h3>Users</h3>
+    <ul id="userList"></ul>
 
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <form class="form-inline form-outer-container">
-                <input class="form-control mr-sm-2 search" type="search" name="search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
-            </form>
-            <h3>Users</h3>
-            <ul id="userList"></ul>
+    <div id="searchResults" style="display: none;">
+        <h3>Search Results</h3>
+        <ul id="searchResultList"></ul>
+    </div>
 
-            <div id="searchResults" style="display: none;">
-                <h3>Search Results</h3>
-                <ul id="searchResultList"></ul>
-            </div>
-            
+</div>
 
-
-        </div>
-
-
-
-        <script src="" async defer></script>
-    </body>
-</html>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from core.models import BaseModel
 
 
 class User(AbstractUser):
@@ -8,7 +9,7 @@ class User(AbstractUser):
         verbose_name_plural = 'users'
 
 
-class Profile(models.Model):
+class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True, default="/profiles/defualt.jpg")
@@ -18,7 +19,7 @@ class Profile(models.Model):
         return self.user.username
 
 
-class Followlist(models.Model):
+class Followlist(BaseModel):
     STATUS_CHOICE = (   
         ('pending', 'Pending'),
         ('accepted', 'Accpeted'),
@@ -33,19 +34,3 @@ class Followlist(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} follows {self.following.username}"
-
-
-class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    caption = models.TextField()
-
-    def __str__(self):
-        return f"Post by {self.user.username}"
-
-
-class PostImage(models.Model):
-    post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images/')
-
-    def __str__(self):
-        return f"Image for {self.post}"

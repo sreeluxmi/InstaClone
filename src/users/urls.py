@@ -6,9 +6,7 @@ from .apis import (UserRegistrationView,
                    ProfileViewSet,
                    FollowRequestView,
                    AcceptFollowRequest,
-                   Unfollow,
-                   PostViewSet,
-                   FeedAPIView)
+                   Unfollow)
 
 from .views import (signup, home,
                     landingPage,
@@ -18,14 +16,11 @@ from .views import (signup, home,
                     single_profile,
                     followers_list_view,
                     following_list_view,
-                    pending_requests,
-                    image_posting,
-                    )
+                    pending_requests)
 
 
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
-router.register(r'posts', PostViewSet)
 
 
 urlpatterns = [
@@ -40,13 +35,11 @@ urlpatterns = [
     path('followers-list/', followers_list_view, name="followers-list"),
     path('following-list/', following_list_view, name="following-list"),
     path('pending-requests/', pending_requests, name="pending-requests"),
-    path('image-posting/', image_posting, name="image-posting"),
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('loginAPI/', UserLoginView.as_view(), name='user-login'),
     path('follow_request/', FollowRequestView.as_view()),
     path('accept_request/', AcceptFollowRequest.as_view()),
-    path('unfollow/<int:id>/', Unfollow.as_view(), name='unfollow-user'),
-    path('feedAPI/', FeedAPIView.as_view(),)
+    path('unfollow/<int:id>/', Unfollow.as_view(), name='unfollow-user')
 ]
