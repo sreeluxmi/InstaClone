@@ -82,7 +82,7 @@ $(document).ready(function(){
                     "follower_id": user_id,
                     "action" : buttonValue
                 }
-                fetch("/users/accept_request/",{
+                fetch("/users/api/accept_request/",{
                     method: "POST",
                     headers: {
                         "Authorization" : "Bearer " + access_token,

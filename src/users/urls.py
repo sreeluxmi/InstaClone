@@ -21,6 +21,8 @@ from .views import (signup, home,
 
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
+router.register(r'loginAPI', UserLoginView)
+router.register(r'accept_request', AcceptFollowRequest)
 
 
 urlpatterns = [
@@ -38,8 +40,8 @@ urlpatterns = [
 
     # API
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
-    path('loginAPI/', UserLoginView.as_view(), name='user-login'),
+
     path('follow_request/', FollowRequestView.as_view()),
-    path('accept_request/', AcceptFollowRequest.as_view()),
+    # path('accept_request/', AcceptFollowRequest.as_view()),
     path('unfollow/<int:id>/', Unfollow.as_view(), name='unfollow-user')
 ]

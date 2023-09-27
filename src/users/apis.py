@@ -13,7 +13,8 @@ from rest_framework.decorators import action
 from .models import (Profile, Followlist)
 from .serializers import (UserSerializer,
                           UserLoginSerializer,
-                          ProfileSerializer)
+                          ProfileSerializer,
+                          FollowListSerializer)
 
 from core.request_responses import (FOLLOWING_EXISTS,
                                     REQUEST_CANCELED,
@@ -49,9 +50,11 @@ class UserRegistrationView(generics.CreateAPIView):
 #         Profile.objects.create(user=user)
 
 
-class UserLoginView(APIView):
+class UserLoginView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -70,16 +73,6 @@ class UserLoginView(APIView):
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class RetrieveUser(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UpdateUser(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -133,7 +126,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
 class FollowRequestView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         follower = request.user
@@ -144,7 +136,6 @@ class FollowRequestView(APIView):
             return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             followlist = Followlist.objects.get(follower=follower, following=following)
-            print("followlist", followlist)
             if followlist.reqstatus == 'accepted':
                 return Response({'detail': FOLLOWING_EXISTS, 'reqstatus': 'accepted'}, status=status.HTTP_400_BAD_REQUEST)
             elif followlist.reqstatus == 'pending':
@@ -168,10 +159,11 @@ class FollowRequestView(APIView):
             return Response({'detail': PENDING_APPROVAL, 'reqstatus': 'pending'}, status=status.HTTP_201_CREATED)
 
 
-class AcceptFollowRequest(APIView):
-    permission_classes = [IsAuthenticated]
+class AcceptFollowRequest(viewsets.ModelViewSet):
+    queryset = Followlist.objects.all()
+    serializer_class = FollowListSerializer
 
-    def post(self, request):
+    def create(self, request):
         following = request.user
         follower_id = request.data.get('follower_id')
         follower = get_object_or_404(User, id=follower_id)

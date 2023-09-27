@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (Profile,
                      Followlist)
 from apps.post.models import (Post)
-from apps.post.serializers import ( PostSerializer)
+from apps.post.serializers import (PostSerializer)
 
 from django.contrib.auth import get_user_model
 User = get_user_model()

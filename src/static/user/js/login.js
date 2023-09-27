@@ -12,7 +12,7 @@ $(document).ready(function () {
 
         var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
 
-        fetch("/users/loginAPI/", {
+        fetch("/users/api/loginAPI/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
