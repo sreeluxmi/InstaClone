@@ -10,6 +10,7 @@ $(document).ready(function () {
         })
         .then(response => {
             if (response.ok) {
+                console.log("User authenticated.");
                 return response.json();
             } else if (response.status === 401) {
                 window.location.href = '/users/home/';
@@ -24,8 +25,13 @@ $(document).ready(function () {
 
             const img = document.createElement("img")
             img.src = `${data.profile_pic}`
-            const container = document.getElementById("profile-image");
+            const container = document.getElementById("image-container");
+            console.log(img)
             container.appendChild(img);
+
+            // const profilePicInput = document.getElementById('profile_pic');
+            // profilePicInput.appendChild(img);
+            // console.log(profilePicInput)
 
         })
 

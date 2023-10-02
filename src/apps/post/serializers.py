@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Post,
+from .models import (Posting, Like,
                      PostImage)
 
 
@@ -17,12 +17,17 @@ class PostSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Post
-        fields = ['caption', 'images', "uploaded_images"]
+        model = Posting
+        fields = ['caption', 'images', "uploaded_images", 'likes']
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop('uploaded_images')
-        post = Post.objects.create(**validated_data)
+        post = Posting.objects.create(**validated_data)
         for uploaded_images in uploaded_images:
             PostImage.objects.create(post=post, image=uploaded_images)
         return post
+    
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['user', 'post']
