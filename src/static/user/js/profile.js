@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var access_token = localStorage.getItem('access_token');
 
+
     if (access_token) {
         fetch("/users/api/profile/me/", {
             method: "GET",

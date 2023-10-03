@@ -23,11 +23,10 @@ $(document).ready(function () {
             console.log(data)
             $("#bio").val(data.bio);
 
-            const img = document.createElement("img")
-            img.src = `${data.profile_pic}`
-            const container = document.getElementById("image-container");
-            console.log(img)
-            container.appendChild(img);
+            // const img = document.createElement("img")
+            // img.src = `${data.profile_pic}`
+            // const container = document.getElementById("image-container");
+            // container.appendChild(img);
 
             // const profilePicInput = document.getElementById('profile_pic');
             // profilePicInput.appendChild(img);

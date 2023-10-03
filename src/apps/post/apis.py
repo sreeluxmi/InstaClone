@@ -1,9 +1,10 @@
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
+from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 # LOCAL
 from users.models import (Followlist)
-from .models import (Posting, Like)
-from .serializers import (PostSerializer, LikeSerializer)
+from .models import (Post, PostImage)
+from .serializers import (PostSerializer)
 
 
 class FeedAPIView(generics.ListAPIView):
@@ -11,23 +12,32 @@ class FeedAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        print(user)
         # following_users = Followlist.objects.get(follower=user, reqstatus='accepted')
         # print(following_users)
         following_users = Followlist.objects.filter(follower=user, reqstatus='accepted').values('following_id')
-        print(following_users)
-        return Posting.objects.filter(user__id__in=following_users)
+
+        return Post.objects.filter(user__id__in=following_users)
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Posting.objects.all()
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     parser_classes = (MultiPartParser, FormParser)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def create(self, request):
+
+        request.data['user'] = request.user.id
+        uploaded_images = request.FILES.getlist('uploaded_images')
+        post_serializer = self.get_serializer(data=request.data)
+        if post_serializer.is_valid():
+            post = post_serializer.save()
+            for uploaded_images in uploaded_images:
+                PostImage.objects.create(post=post, image=uploaded_images)
+            return Response(post_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LikeViewSet(viewsets.ModelViewSet):
-    queryset = Like.objects.all()
-    serializer_class = LikeSerializer
+# class LikeViewSet(viewsets.ModelViewSet):
+#     queryset = Like.objects.all()
+#     serializer_class = LikeSerializer

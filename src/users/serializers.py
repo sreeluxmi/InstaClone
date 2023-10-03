@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (Profile,
                      Followlist)
-from apps.post.models import (Posting)
+from apps.post.models import (Post)
 from apps.post.serializers import (PostSerializer)
 
 from django.contrib.auth import get_user_model
@@ -80,9 +80,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         other_user = obj.user
         user = self.context['request'].user
         if other_user == user:
-            user_posts = Posting.objects.filter(user=user)
+            user_posts = Post.objects.filter(user=user)
         else:
-            user_posts = Posting.objects.filter(user=other_user)
+            user_posts = Post.objects.filter(user=other_user)
         return PostSerializer(user_posts, many=True).data
 
 

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var access_token = localStorage.getItem('access_token')
 
     if(access_token){
-        fetch('/apps.post/ feedAPI',{
+        fetch('/apps.post/feedAPI',{
             method: 'GET',
             headers: {
                 "Authorization": "Bearer " + access_token,
@@ -22,14 +22,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 const feedContainer = document.getElementById("feed");
                 feedContainer.innerHTML = "";
 
-                if(data.length > 0){
-                    console.log(data.length)
+                if(data && data.length > 0){
                     for(let i=0; i<data.length; i++){
                         const item = data[i]
                         console.log(item)
 
                         const postContainer = document.createElement("div")
                         postContainer.className = 'post-container'
+
+                        const nameContainer = document.createElement("p")
+                        nameContainer.textContent = `Posted by ${item.username}`
+                        postContainer.appendChild(nameContainer)
 
                         const imageList = document.createElement('ul')
                         for(let j=0; j< item.images.length; j++){
@@ -45,6 +48,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
 
                         postContainer.appendChild(imageList);
+
+                        const likesContainer = document.createElement("p")
+                        likesContainer.textContent = `${item.likes.length} Likes`
+                        postContainer.appendChild(likesContainer)
 
                         const caption = document.createElement('p')
                         caption.textContent = `${item.caption}`
