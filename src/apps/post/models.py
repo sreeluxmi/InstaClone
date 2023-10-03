@@ -22,11 +22,12 @@ class PostImage(BaseModel):
         return f"Image for {self.post}"
 
 
-# class Like(BaseModel):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_likes')
-#     post = models.ForeignKey(Posting, related_name='post_likes', on_delete=models.CASCADE)
+class Like(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_likes')
+    post = models.ForeignKey(Post, related_name='post_likes', on_delete=models.CASCADE)
 
-#     def __str__(self):
-#         return f"{self.user.username} likes {self.post}"
-#     class Meta:
-#         unique_together = ('user', 'post')
+    def __str__(self):
+        return f"{self.user.username} likes {self.post}"
+
+    class Meta:
+        unique_together = ('user', 'post')

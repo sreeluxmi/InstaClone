@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import (Post,
+                     Like,
                      PostImage)
 
 
@@ -30,8 +31,8 @@ class PostSerializer(serializers.ModelSerializer):
     #         PostImage.objects.create(post=post, image=uploaded_images)
     #     return post
 
-            
-# class LikeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Like
-#         fields = ['user', 'post']
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['user', 'post']

@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 # LOCAL
 from users.models import (Followlist)
-from .models import (Post, PostImage)
-from .serializers import (PostSerializer)
+from .models import (Post, PostImage, Like)
+from .serializers import (PostSerializer, LikeSerializer)
 
 
 class FeedAPIView(generics.ListAPIView):
@@ -38,6 +38,6 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class LikeViewSet(viewsets.ModelViewSet):
-#     queryset = Like.objects.all()
-#     serializer_class = LikeSerializer
+class LikeViewSet(viewsets.ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
